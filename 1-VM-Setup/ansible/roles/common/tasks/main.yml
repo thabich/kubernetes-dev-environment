@@ -1,0 +1,12 @@
+---
+- name: Create users
+  ansible.builtin.include_tasks:
+    file: users.yml
+- name: Install packages and repos
+  ansible.builtin.include_tasks:
+    file: packages.yml
+
+- name: Create network config
+  ansible.builtin.include_tasks:
+    file: network.yml
+  tags: [Never]

@@ -1,0 +1,36 @@
+---
+- name: Create Netplan config
+  ansible.builtin.template:
+    src: netplan.j2
+    dest: /etc/netplan/01-ansible.yaml
+    mode: "0600"
+    validate: "netplan try --timeout 2 --config-file %s"
+
+- name: NetPlan Apply
+  ansible.builtin.command:
+    cmd: "netplan apply"
+
+- name: Enabled systemd-networkd
+  ansible.builtin.systemd:
+    name: systemd-networkd
+    enabled: true
+    state: started
+
+- name: Enabled systemd-resolved
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    enabled: true
+    state: started
+
+- name: Delete /etc/network/interfaces
+  ansible.builtin.file:
+    path: /etc/network/interfaces
+    state: absent
+
+- name: Disable networking
+  ansible.builtin.systemd:
+    name: networking
+    enabled: false
+    state: stopped
+  notify: "reboot"
+  ignore_errors: true

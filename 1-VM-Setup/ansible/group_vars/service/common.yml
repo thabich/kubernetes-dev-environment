@@ -1,0 +1,4 @@
+common_extra_packages:
+- git
+- kubectl
+- bind9

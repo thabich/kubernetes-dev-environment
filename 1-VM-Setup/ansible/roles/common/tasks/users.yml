@@ -1,0 +1,15 @@
+---
+- name: Create user
+  ansible.builtin.user:
+    name: "{{ common_admin_user }}"
+
+- name: Add ssh_authorized_keys
+  ansible.posix.authorized_key:
+    user: "{{ common_admin_user }}"
+    key: "{{ lookup('file', 'public_keys/admin.pub') }}"
+
+- name: Add sudo permissions
+  community.general.sudoers:
+    name: Allow sudo for admin user
+    user: "{{ common_admin_user }}"
+    commands: ALL

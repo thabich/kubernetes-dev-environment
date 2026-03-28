@@ -1,0 +1,30 @@
+- name: Install bind
+  ansible.builtin.apt:
+    pkg: bind
+
+- name: Copy static zones
+  ansile.builtin.copy:
+    src: zones
+    dest: /etc/bind/
+    owner: root
+    group: bind
+    mode: '0644'
+
+- name: Generate key
+  ansible.builtin.command:
+    cmd: tsig-keygen -a HMAC-SHA256 dyndns
+  register: dyndns
+
+- name: Write key
+  ansible.builtin.copy:
+    dest: /etc/bin/dyndns.key
+    content: "{{ dyndns.stdout }}"
+    force: no
+    owner: root
+    group: bind
+    mode: '0640'
+
+
+      
+
+  

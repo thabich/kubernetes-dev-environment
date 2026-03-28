@@ -1,0 +1,28 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    # NAT / First NIC
+    enp0s3:
+      dhcp4: true
+      dhcp4-overrides:
+        use-dns: false
+
+    # NatNetwork / Third NIC
+    enp0s9:
+      dhcp4: true
+      dhcp4-overrides:
+        use-dns: false
+      nameservers:
+        search: [{{ common_domain }}]
+        addresses: [{{ '8.8.8.8' if groups['service'] is defined and inventory_hostname in  groups['service']  else service_host_ip }}]
+        
+{%- if groups['service'][inventory_hostname] is defined -%}
+    # HostOnly / Second NIC
+    enp0s8:
+      dhcp4: false
+      dhcp4-overrides:
+        use-dns: false
+      addresses:
+        - {{ service_host_ip }}
+{%- endif -%}

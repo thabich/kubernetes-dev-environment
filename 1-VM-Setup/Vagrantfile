@@ -1,0 +1,75 @@
+IMAGE_NAME = "shekeriev/debian-13"
+N = 2
+
+HOSTONLY_ADAPTER_NAME = "VirtualBox Host-Only Ethernet Adapter"
+
+CONTROL_NODE_NAME = "controlplane"
+CONTROL_NODE_CPU = 1
+CONTROL_NODE_MEMORY = 256
+
+SERVICE_NODE_NAME = "manager"
+SERVICE_NODE_CPU = 1
+SERVICE_NODE_MEMORY = 256
+
+NODE_NAME_PREFIX = "node-"
+NODE_CPU = 1
+NODE_MEMORY = 256
+
+DOMAIN = "k8s.findichgut.net"
+
+
+def ansible_provision(node)
+    node.vm.provision "ansible" do |ansible|
+        ansible.playbook = "ansible/playbook.yml"
+        ansible.groups = {
+            "controlplane" => [CONTROL_NODE_NAME],
+            "nodes" => [NODE_NAME_PREFIX + "[1:" + N.to_s + "]"],
+            "service" => [SERVICE_NODE_NAME]
+        }
+        ansible.tags = "vagrant"
+        ansible.limit = "all"
+    end
+end
+
+
+Vagrant.configure("2") do |config|
+    config.vm.box = IMAGE_NAME
+=begin
+    config.vm.define CONTROL_NODE_NAME do |master|
+        master.vm.hostname = CONTROL_NODE_NAME + "." + DOMAIN
+        master.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--nic3", "natnetwork"]
+            v.customize ["modifyvm", :id, "--nat-network3", "k8sNatNetwork"]
+            v.memory = CONTROL_NODE_MEMORY
+            v.cpus = CONTROL_NODE_CPU
+            v.name = CONTROL_NODE_NAME
+        end
+    end
+
+    (1..N).each do |i|
+        config.vm.define NODE_NAME_PREFIX + "#{i}" do |node|
+            node.vm.hostname = NODE_NAME_PREFIX + "#{i}" + "." + DOMAIN
+            node.vm.provider "virtualbox" do |v|
+                v.customize ["modifyvm", :id, "--nic3", "natnetwork"]
+                v.customize ["modifyvm", :id, "--nat-network3", "k8sNatNetwork"]
+                v.memory = NODE_MEMORY
+                v.cpus = NODE_CPU
+                v.name = NODE_NAME_PREFIX + "#{i}"
+            end
+        end
+    end
+=end
+
+    config.vm.define SERVICE_NODE_NAME do |service|
+        service.vm.hostname = SERVICE_NODE_NAME + "." + DOMAIN
+        service.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--nic2", "hostonly", "--hostonlyadapter2", HOSTONLY_ADAPTER_NAME ]
+            v.customize ["modifyvm", :id, "--nic3", "natnetwork"]
+            v.customize ["modifyvm", :id, "--nat-network3", "k8sNatNetwork"]
+            v.memory = SERVICE_NODE_MEMORY
+            v.cpus = SERVICE_NODE_CPU
+            v.name = SERVICE_NODE_NAME
+        end
+        ansible_provision(service)
+    end
+end
