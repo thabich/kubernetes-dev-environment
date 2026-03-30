@@ -1,0 +1,25 @@
+- name: Create the argocd namespace
+  kubernetes.core.k8s:
+    name: argocd
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Install ArgoCD
+  ansible.builtin.command:
+    cmd: >
+      kubectl apply -n argocd --server-side --force-conflicts 
+      -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    
+- name: Install Argo CLI
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/argoproj/argo-cd/releases/download/{{ argocd_version }}/argocd-linux-amd64"
+    dest: /usr/local/bin/argocd
+    mode: "0755"
+
+- name: Autocompletion
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/home/{{ argocd_admin_user }}/.bashrc"
+    line: "source <(argocd completion bash)" 

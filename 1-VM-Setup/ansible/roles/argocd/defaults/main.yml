@@ -1,0 +1,2 @@
+argocd_admin_user: "{{ admin_user | default('vmadm') }}"
+argocd_version: v3.3.6

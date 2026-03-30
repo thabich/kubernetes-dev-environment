@@ -2,3 +2,9 @@
 
 - name: reboot
   ansible.builtin.reboot:
+
+- name: Enable dnsmasq
+  ansible.builtin.systemd:
+    name: dnsmasq.service
+    enabled: true
+    state: restarted

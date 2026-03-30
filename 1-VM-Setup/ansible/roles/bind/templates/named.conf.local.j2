@@ -1,0 +1,7 @@
+include "/etc/bind/dyndns.key";
+zone "{{ domain }}" {
+    type master;
+    file "/var/lib/bind/{{ domain }}.zone";
+    allow-update { key "dyndns"; };
+};
+

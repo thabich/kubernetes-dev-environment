@@ -1,7 +1,12 @@
 ---
+- name: Reset machine id
+  ansible.builtin.include_tasks:
+    file: reset-machine-id.yml
+
 - name: Create users
   ansible.builtin.include_tasks:
     file: users.yml
+
 - name: Install packages and repos
   ansible.builtin.include_tasks:
     file: packages.yml
@@ -10,3 +15,9 @@
   ansible.builtin.include_tasks:
     file: network.yml
   tags: [Never]
+
+- name: Flush handlers now, to trigger reboot, if needed
+  ansible.builtin.meta: flush_handlers
+
+- name: Refresh facts
+  ansible.builtin.setup:

@@ -1,0 +1,104 @@
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  loop:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_facts['swaptotal_mb'] > 0
+
+- name: Install binaries
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - containerd.io
+    - kubelet 
+    - kubeadm 
+
+
+- name: Hold packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet 
+    - kubeadm 
+
+- name: Enable plugins
+  ansible.builtin.lineinfile:
+    path: /etc/containerd/config.toml
+    regex: "^disabled_plugins"
+    state: absent
+
+- name: Enable SystemdCgroups in containerd
+  ansible.builtin.blockinfile:
+    path: /etc/containerd/config.toml
+    block: |
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+        SystemdCgroup = true
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  notify: Restart containerd
+
+- name: Flush handlers now, to trigger restart of containerd if needed
+  ansible.builtin.meta: flush_handlers
+
+- name: Configure node ip
+  lineinfile:
+    path: /etc/default/kubelet
+    line: "KUBELET_EXTRA_ARGS=--node-ip={{ ansible_facts[kubernetes_interface]['ipv4']['address'] }}"
+
+- name: Restart kubelet
+  service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: true
+
+- name: IPv4 Forwarding
+  ansible.builtin.copy:
+    content: "net.ipv4.ip_forward = 1"
+    dest: /etc/sysctl.d/99_kubernetes.conf
+
+- name: Read sysctl configs
+  ansible.builtin.command:
+    cmd: sysctl --system
+
+- name: Cluster generation
+  when: groups['controlplane'] is defined and inventory_hostname in groups['controlplane']
+  block:
+  - name: Generate Cluster    
+    ansible.builtin.command:
+      cmd: > 
+        kubeadm init --apiserver-advertise-address={{ ansible_facts[kubernetes_interface]['ipv4']['address'] }} 
+        --apiserver-cert-extra-sans="{{ ansible_facts['hostname'] }},{{ ansible_facts['fqdn'] }},{{ ansible_facts[kubernetes_interface]['ipv4']['address'] }}"
+        --control-plane-endpoint="{{ ansible_facts['fqdn'] }}"  
+        --node-name "{{ inventory_hostname_short }}" 
+        --pod-network-cidr={{ kubernetes_pod_network_cidr }}
+      creates: /etc/kubernetes/admin.conf
+  - name: Generate join command
+    ansible.builtin.command: 
+      cmd: kubeadm token create --print-join-command
+    register: join_command
+  - name: Set join command fact
+    ansible.builtin.set_fact:
+      node_join_command: "{{ join_command.stdout_lines[0] }}" 
+  - name: Register nodes
+    ansible.builtin.command:
+      cmd: "{{ node_join_command }}"
+      creates: /var/lib/kubelet/pki/kubelet-client-current.pem
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['nodes'] }}"
+  - name: Copy kubeconfig
+    ansible.builtin.include_tasks:
+      file: copy_kubeconfig.yml
+    loop: "{{ groups['service'] }}"
+    loop_control:
+      loop_var: system

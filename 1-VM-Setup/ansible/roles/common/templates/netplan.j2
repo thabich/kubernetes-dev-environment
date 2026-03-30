@@ -10,19 +10,21 @@ network:
 
     # NatNetwork / Third NIC
     enp0s9:
-      dhcp4: true
-      dhcp4-overrides:
-        use-dns: false
+{% if groups['service'] is defined and inventory_hostname in  groups['service'] %}
+      dhcp4: false
+      addresses:
+      - {{ common_service_host_ip }}
       nameservers:
         search: [{{ common_domain }}]
-        addresses: [{{ '8.8.8.8' if groups['service'] is defined and inventory_hostname in  groups['service']  else service_host_ip }}]
-        
+        addresses: [{{ common_service_host_ip | ansible.utils.ipaddr('address')  }}]
+{% else %}
+      dhcp4: true
+{% endif %}
+
 {%- if groups['service'][inventory_hostname] is defined -%}
     # HostOnly / Second NIC
     enp0s8:
       dhcp4: false
       dhcp4-overrides:
         use-dns: false
-      addresses:
-        - {{ service_host_ip }}
 {%- endif -%}

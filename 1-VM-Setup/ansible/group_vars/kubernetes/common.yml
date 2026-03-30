@@ -1,8 +1,0 @@
-common_extra_apt_repositories: []
-
-common_extra_packages: 
-      - docker-ce 
-      - docker-ce-cli 
-      - containerd.io
-      - kubelet 
-      - kubeadm 

@@ -1,0 +1,18 @@
+# Make sure, that each VM has a uniq ID
+- name: Remove existing machine-id files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/machine-id
+    - /var/lib/dbus/machine-id
+
+- name: Generate new machine-id
+  ansible.builtin.command: 
+    cmd: systemd-machine-id-setup
+
+- name: Restore dbus machine-id symlink
+  ansible.builtin.file:
+    src: /etc/machine-id
+    dest: /var/lib/dbus/machine-id
+    state: link

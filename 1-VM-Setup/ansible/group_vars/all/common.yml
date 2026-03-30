@@ -1,15 +1,22 @@
+kubernetes_version: v1.35
 common_apt_repositories:
 - name: debian-backports
   repo: "http://deb.debian.org/debian"
+  components: main
   suites: "{{ ansible_facts['distribution_release'] }}-backports"
   key: /usr/share/keyrings/debian-archive-keyring.gpg
 - name: docker
   repo: "https://download.docker.com/linux/debian"
   key: "https://download.docker.com/linux/debian/gpg"
+- name: kubernetes
+  repo: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/"
+  suites: ./
+  components: 
+  key: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/Release.key"
 
 
-
-common_admin_user: vmadm
+dhcp_interface: enp0s9
+admin_user: vmadm
 
 common_default_packages:
 - python3
@@ -20,13 +27,17 @@ common_default_packages:
 - gnupg-agent
 - netplan.io
 - systemd-resolved
+- rsyslog
+- unattended-upgrades
+- kubectl
 
 common_default_hold_packages:
 - grub-pc
+- kubectl
 
-common_default_remvoe_packages:
-- dhcpcd-base
+#common_default_remove_packages:
+#- dhcpcd-base
 
-common_domain: "k8s.findichgut.net" 
+domain: "k8s.findichgut.net" 
 
-service_host_ip: "192.168.56.150"
+internal_network: "10.0.3.0/24"

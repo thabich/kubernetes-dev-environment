@@ -1,4 +1,15 @@
 common_extra_packages:
 - git
 - kubectl
-- bind9
+- dnsmasq
+- helm
+- python3-kubernetes
+
+common_extra_apt_repositories:
+- name: helm
+  repo: "https://packages.buildkite.com/helm-linux/helm-debian/any/"
+  suites: any
+  components: main
+  key: "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey"
+
+argocd_version: v3.3.6

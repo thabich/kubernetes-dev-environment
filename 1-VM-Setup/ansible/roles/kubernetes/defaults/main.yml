@@ -1,0 +1,4 @@
+kubernetes_pod_network_cidr: "10.1.0.0/16"
+kubernetes_admin_user: "{{ admin_user | default('vmadm') }}"
+
+kubernetes_interface: "{{ dhcp_interface | default('enp0s9') }}"

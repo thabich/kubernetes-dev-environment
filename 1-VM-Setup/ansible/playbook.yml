@@ -1,5 +1,49 @@
 - hosts: all
+  name: Deploy base system
   become: true
   roles:
-  - role: common
+    - role: common
+      tags: [ vagrant ]
+
+- name: Set IP reservations
+  hosts: all
+  become: true
+  serial: 1
+  tasks:
+  - ansible.builtin.lineinfile:
+      line: "dhcp-host={{ ansible_facts[dhcp_interface]['macaddress'] }},{{ ansible_facts[dhcp_interface]['ipv4']['address'] }}"
+      path: "/etc/dnsmasq.d/02-ansible-static.conf"
+      create: true
+      regexp: "dhcp-host={{ ansible_facts[dhcp_interface]['macaddress'] }}.*"
+    delegate_to: "{{ groups['service'][0] }}"
+    delegate_facts: true 
     tags: [ vagrant ]
+    when: groups['service'][0] | length > 0
+
+- name: Restart dnsmasq
+  hosts: service
+  become: true
+  tasks:
+  - name: Restart dnsmasq
+    ansible.builtin.systemd:
+      name: dnsmasq
+      state: restarted
+    tags: [ vagrant ]
+   
+  
+- hosts: nodes,controlplane
+  name: Deploy Kubernetes
+  become: true
+  roles:
+    - role: kubernetes
+      tags: [ vagrant ]
+
+- hosts: service
+  run_once: true
+  name: Deploy Kubernetes
+  become: false
+  roles:
+    - role: cilium
+      tags: [ vagrant ]
+    - role: argocd
+      tags: [ vagrant ]
