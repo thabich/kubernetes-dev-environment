@@ -1,0 +1,14 @@
+#  sudo helm plugin install https://github.com/databus23/helm-diff
+
+- name: Run helm installer from URL
+  hosts: all
+  tasks:
+    - name: Download and run script
+      ansible.builtin.uri:
+        url: "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-{{ helm_major_version }}""
+        return_content: yes
+      register: install
+    - name: Execute the downloaded content
+      ansible.builtin.shell: sh
+      args:
+        stdin: "{{ script_content.content }}"

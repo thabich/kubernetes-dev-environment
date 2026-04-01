@@ -8,7 +8,7 @@
     name: cilium
     release_namespace: kube-system
     chart_ref: cilium/cilium
-    values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
+    values: "{{ lookup('file', 'values.yml') | from_yaml }}"
 
 - name: Install Cilium CLI
   become: true

@@ -1,18 +1,30 @@
 # Make sure, that each VM has a uniq ID
-- name: Remove existing machine-id files
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - /etc/machine-id
-    - /var/lib/dbus/machine-id
+# memory option might be removed again, after ansible was installed on managent host
+# right now, we're running the playbook only via vagrant
+- name: Check if touched file exists to know if the keys have already been regenerated
+  ansible.builtin.stat:
+    path: /etc/.machine-id.regenerated
+  register: machine_id_regenerated
 
-- name: Generate new machine-id
-  ansible.builtin.command: 
-    cmd: systemd-machine-id-setup
-
-- name: Restore dbus machine-id symlink
-  ansible.builtin.file:
-    src: /etc/machine-id
-    dest: /var/lib/dbus/machine-id
-    state: link
+- name: Regenerate Machine IDs
+  when: not machine_id_regenerated.stat.exists
+  block:
+  - name: Remove existing machine-id files
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+      - /etc/machine-id
+      - /var/lib/dbus/machine-id
+  - name: Generate new machine-id
+    ansible.builtin.command: 
+      cmd: systemd-machine-id-setup
+  - name: Restore dbus machine-id symlink
+    ansible.builtin.file:
+      src: /etc/machine-id
+      dest: /var/lib/dbus/machine-id
+      state: link
+  - name: Remember that image IDs have been re-generated already
+    ansible.builtin.file:
+      path: /etc/.machine-id.regenerated
+      state: touch

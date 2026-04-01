@@ -3,7 +3,6 @@
   become: true
   roles:
     - role: common
-      tags: [ vagrant ]
 
 - name: Set IP reservations
   hosts: all
@@ -17,7 +16,6 @@
       regexp: "dhcp-host={{ ansible_facts[dhcp_interface]['macaddress'] }}.*"
     delegate_to: "{{ groups['service'][0] }}"
     delegate_facts: true 
-    tags: [ vagrant ]
     when: groups['service'][0] | length > 0
 
 - name: Restart dnsmasq
@@ -28,15 +26,12 @@
     ansible.builtin.systemd:
       name: dnsmasq
       state: restarted
-    tags: [ vagrant ]
    
-  
 - hosts: nodes,controlplane
   name: Deploy Kubernetes
   become: true
   roles:
     - role: kubernetes
-      tags: [ vagrant ]
 
 - hosts: service
   run_once: true
@@ -44,6 +39,4 @@
   become: false
   roles:
     - role: cilium
-      tags: [ vagrant ]
     - role: argocd
-      tags: [ vagrant ]

@@ -1,16 +1,16 @@
-- name: Create the argocd namespace
-  kubernetes.core.k8s:
-    name: argocd
-    api_version: v1
-    kind: Namespace
-    state: present
+- name: Add argo helm repo
+  kubernetes.core.helm_repository:
+    name: argo
+    repo_url: https://argoproj.github.io/argo-helm
 
-- name: Install ArgoCD
-  ansible.builtin.command:
-    cmd: >
-      kubectl apply -n argocd --server-side --force-conflicts 
-      -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    
+- name: Install argo-cd
+  kubernetes.core.helm:
+    name: argocd
+    release_namespace: argo-cd
+    chart_ref: argo/argo-cd
+    create_namespace: true
+    values: "{{ lookup('file', 'values.yml') | from_yaml }}"
+
 - name: Install Argo CLI
   become: true
   ansible.builtin.get_url:

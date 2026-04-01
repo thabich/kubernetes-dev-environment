@@ -14,3 +14,8 @@
     name: Allow sudo for admin user
     user: "{{ common_admin_user }}"
     commands: ALL
+
+- name: Lock  password for vagrant user
+  ansible.builtin.user:
+    name: vagrant
+    password_lock: true

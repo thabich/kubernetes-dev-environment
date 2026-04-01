@@ -8,3 +8,7 @@
     name: dnsmasq.service
     enabled: true
     state: restarted
+
+- name: NetPlan Apply
+  ansible.builtin.command:
+    cmd: "netplan apply"

@@ -1,16 +1,16 @@
 ---
-
+# We are using netplan to simplify setup on Debian and Ubuntu machines
 - name: Create Netplan config
   ansible.builtin.template:
     src: netplan.j2
     dest: /etc/netplan/01-ansible.yaml
     mode: "0600"
     validate: "netplan try --timeout 2 --config-file %s"
+  notify: NetPlan Apply
 
-- name: NetPlan Apply
-  ansible.builtin.command:
-    cmd: "netplan apply"
 
+
+# Enable DHCP services on management host.
 - name: Create dnsmasq config
   ansible.builtin.template:
     src: dnsmasq.conf.j2
@@ -33,6 +33,7 @@
     enabled: true
     state: started
 
+# remove and disable ifupdown components in case they exist
 - name: Delete /etc/network/interfaces
   ansible.builtin.file:
     path: /etc/network/interfaces
@@ -45,3 +46,12 @@
     state: stopped
   notify: "reboot"
   ignore_errors: true
+
+- name: Remove legacy packages
+  ansible.builtin.apt:
+    update_cache: no
+    pkg: 
+    - ifupdown
+    - dhcpcd-base
+    state: absent
+  

@@ -49,6 +49,8 @@ $PYTHON -m pip install -U -r requirements.txt
 if [ $WSL == 1 ]; then
 	write_status "Installing WSL plugin..."
 	vagrant plugin install virtualbox_WSL2
+	write_status "Installing disk size plugin (workaround for vmdk boxes)"
+	vagrant plugin install vagrant-disksize
         write_status "Modifying automount options in /etc/wsl.conf"
 	sudo crudini --set /etc/wsl.conf  automount options "metadata,umask=22,fmask=11"
         sudo crudini --set /etc/wsl.conf  automount enabled true
