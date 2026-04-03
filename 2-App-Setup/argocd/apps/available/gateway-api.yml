@@ -14,7 +14,6 @@ spec:
     repoURL: https://github.com/kubernetes-sigs/gateway-api.git
     targetRevision: v1.5.1
     path: config/crd
-    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
