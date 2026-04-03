@@ -12,3 +12,8 @@
 - name: NetPlan Apply
   ansible.builtin.command:
     cmd: "netplan apply"
+
+- name: Restart dnsmasq
+  ansible.builtin.systemd:
+    name: dnsmasq
+    state: restarted

@@ -25,9 +25,3 @@
     name: "{{ item }}"
     selection: hold
   with_items: "{{ common_default_hold_packages + common_extra_hold_packages }}"
-
-# Needs workaround for grub-pc
-- name: Upgrade all packages
-  ansible.builtin.apt:
-    pkg: "*"
-    state: latest

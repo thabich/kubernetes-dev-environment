@@ -35,9 +35,11 @@ common_default_hold_packages:
 - grub-pc
 - kubectl
 
-#common_default_remove_packages:
-#- dhcpcd-base
+common_default_remove_packages:
+- helm
 
 domain: "k8s.findichgut.net" 
 
 internal_network: "10.0.3.0/24"
+
+use_kube_proxy: false

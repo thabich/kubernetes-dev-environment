@@ -3,3 +3,14 @@
     name:  containerd
     state: restarted
     enabled: true
+
+- name: Restart kubelet
+  service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: true
+    
+- name: Read sysctl configs
+  ansible.builtin.command:
+    cmd: sysctl --system

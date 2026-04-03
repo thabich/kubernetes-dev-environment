@@ -12,10 +12,11 @@ SERVICE_NODE_NAME = "manager"
 SERVICE_NODE_CPU = 1
 SERVICE_NODE_MEMORY = 256
 SERVICE_NODE_DISK_SIZE = "32GB"
+SERVICE_NODE_MAC = "080027B9AD7E" # static mac for dhcp  reservation
 
 NODE_NAME_PREFIX = "node"
 NODE_CPU = 1
-NODE_MEMORY = 1024
+NODE_MEMORY = 2048
 NODE_DISK_SIZE = "36GB"
 
 DOMAIN = "k8s.findichgut.net"
@@ -30,7 +31,7 @@ def ansible_provision(node)
             "nodes" => (1..N).map { |i| "%s%02d" % [NODE_NAME_PREFIX, i] },
             "service" => [SERVICE_NODE_NAME]
         }
-        ansible.tags = "all,never"
+        ansible.tags = "cilium"
         ansible.limit = "all"
         ansible.raw_arguments = ["-e", "ansible_ssh_pipelining=True"]
     end
@@ -73,7 +74,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.define SERVICE_NODE_NAME do |service|
         service.vm.hostname = SERVICE_NODE_NAME + "." + DOMAIN
-        service.vm.network "public_network", bridge: "Intel(R) Wi-Fi 7 BE200 320MHz", adapter: 2
+        service.vm.network "public_network", bridge: "Intel(R) Wi-Fi 7 BE200 320MHz", adapter: 2, :mac => SERVICE_NODE_MAC
         service.vm.disk :disk, size: SERVICE_NODE_DISK_SIZE, primary: true
         service.vm.provider "virtualbox" do |v|
             v.customize ["modifyvm", :id, "--nic3", "natnetwork"]

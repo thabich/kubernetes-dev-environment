@@ -2,13 +2,15 @@
   kubernetes.core.helm_repository:
     name: cilium
     repo_url: https://helm.cilium.io/
+    binary_path: "{{ cilium_helm_binary }}"
 
 - name: Install cilium
   kubernetes.core.helm:
     name: cilium
     release_namespace: kube-system
     chart_ref: cilium/cilium
-    values: "{{ lookup('file', 'values.yml') | from_yaml }}"
+    values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
+    binary_path: "{{ cilium_helm_binary }}"
 
 - name: Install Cilium CLI
   become: true

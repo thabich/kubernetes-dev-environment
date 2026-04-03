@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: simple-pipeline-run
+spec:
+  pipelineSpec:
+    tasks:
+      - name: hello-task
+        taskSpec:
+          steps:
+            - name: say-hello
+              image: alpine:3.18
+              script: |
+                #!/bin/sh
+                echo "Hello from Tekton, I am step 1 of task 1"
+            - name: say-hello-2
+              image: alpine:3.18
+              script: |
+                #!/bin/sh
+                echo "Hello from Tekton, I am step 2 of task 1"
+      - name: bye-task
+        taskSpec:
+          steps:
+            - name: say-goodbye
+              image: alpine:3.18
+              script: |
+                #!/bin/sh
+                echo "I am the final step in the final task. Time to say goodbye"

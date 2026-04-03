@@ -1,1 +1,9 @@
-helm_major_version: 3
+# Only define version, if you need a specific one
+#helm_3_version: v.3.20.1
+#helm_4_version: v.4.1.2
+
+helm_default_version: 4
+helm_admin_user: "{{ admin_user | default('vmadm') }}"
+helm_plugins_vagrant:
+  - url: https://github.com/databus23/helm-diff
+    helm_version: 3

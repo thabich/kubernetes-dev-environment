@@ -16,8 +16,6 @@
     file: network.yml
   tags: [Never]
 
-- name: Flush handlers now, to trigger reboot, if needed
-  ansible.builtin.meta: flush_handlers
 
-- name: Refresh facts
-  ansible.builtin.setup:
+
+

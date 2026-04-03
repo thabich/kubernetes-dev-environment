@@ -1,0 +1,97 @@
+apiVersion: dashboard.tekton.dev/v1alpha1  # <-- Das ist die Extension CRD API
+kind: Extension
+namespace: tekton-dashboard
+metadata:
+  name: pods
+spec:
+  displayName: Pods
+  apiVersion: core/v1
+  name: pods
+  kind: Pod
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-extension-pods
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-extension-pods
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-dashboard-extension-pods
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: dashboard.tekton.dev/v1alpha1
+kind: Extension
+metadata:
+  name: cronjobs
+  namespace: tekton-dashboard
+spec:
+  apiVersion: batch/v1
+  name: cronjobs
+  displayName: Cronjobs
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-cronjobs-extension
+rules:
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-extension-cronjobs
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-dashboard-cronjobs-extension
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: dashboard.tekton.dev/v1alpha1
+kind: Extension
+metadata:
+  name: deployments
+  namespace: tekton-dashboard
+spec:
+  apiVersion: "apps/v1"
+  kind: Deployment
+  name: deployments
+  displayName: Deployments
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-deployments-extension
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-extension-deployments
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-dashboard-deployments-extension
+  apiGroup: rbac.authorization.k8s.io

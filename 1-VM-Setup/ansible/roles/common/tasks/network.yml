@@ -55,3 +55,16 @@
     - dhcpcd-base
     state: absent
   
+- name: Flush handlers now, to trigger reboot, if needed
+  ansible.builtin.meta: flush_handlers
+
+- name: Refresh facts
+  ansible.builtin.setup:
+  
+- name: Create reservation entries via template
+  ansible.builtin.template:
+    src: dnsmasq-static.conf.j2
+    dest: /etc/dnsmasq.d/02-ansible-static.conf
+  notify:
+    - Restart dnsmasq
+  when: '"service" in group_names'

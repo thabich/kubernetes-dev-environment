@@ -1,14 +1,61 @@
 #  sudo helm plugin install https://github.com/databus23/helm-diff
+---
+# Helm 3
+- name: Helm Installer releases
+  ansible.builtin.uri:
+    url: "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
+    return_content: yes
+  register: installer
+- name: Execute the downloaded content
+  environment:
+    BINARY_NAME: "helm-3"
+    DESIRED_VERSION: "{{ helm_3_version | default(omit)}}"
+  ansible.builtin.command:
+    cmd: bash
+    stdin: "{{ installer.content }}"
+  register: installer_status
+  changed_when: installer_status.stdout is not regex(".*already latest.*")
 
-- name: Run helm installer from URL
-  hosts: all
-  tasks:
-    - name: Download and run script
-      ansible.builtin.uri:
-        url: "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-{{ helm_major_version }}""
-        return_content: yes
-      register: install
-    - name: Execute the downloaded content
-      ansible.builtin.shell: sh
-      args:
-        stdin: "{{ script_content.content }}"
+
+# Helm 4
+- name: Helm Installer releases
+  ansible.builtin.uri:
+    url: "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4"
+    return_content: yes
+  register: installer
+- name: Execute the downloaded content
+  environment:
+    BINARY_NAME: "helm-4"
+    DESIRED_VERSION: "{{ helm_4_version | default(omit)}}"
+  ansible.builtin.command:
+    cmd: bash
+    stdin: "{{ installer.content }}"
+  register: installer_status
+  changed_when: installer_status.stdout is not regex(".*already latest.*")
+
+- name: Set default version
+  become: true
+  ansible.builtin.file:
+    state: link
+    src: "/usr/local/bin/helm-{{ helm_default_version }}"
+    path: "/usr/local/bin/helm"
+
+
+- name: Autocompletion
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/home/{{ helm_admin_user }}/.bashrc"
+    line: "source <(helm completion bash)"
+
+
+- name: Plugins for vagrant user
+  become: false
+  ansible.builtin.command:
+    cmd: "/usr/local/bin/helm-{{ item.helm_version }} plugin install {{ item.url }}"
+  register: plugin_install
+  failed_when:
+    - plugin_install.rc != 0
+    - '"plugin already exists" not in plugin_install.stderr'
+  changed_when:
+    - plugin_install.rc == 0
+  loop: "{{ helm_plugins_vagrant }}"

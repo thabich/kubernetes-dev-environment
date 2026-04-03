@@ -2,14 +2,22 @@
   kubernetes.core.helm_repository:
     name: argo
     repo_url: https://argoproj.github.io/argo-helm
+    binary_path: "{{ argocd_helm_binary }}"
 
 - name: Install argo-cd
   kubernetes.core.helm:
     name: argocd
-    release_namespace: argo-cd
+    release_namespace: argocd
     chart_ref: argo/argo-cd
     create_namespace: true
     values: "{{ lookup('file', 'values.yml') | from_yaml }}"
+    binary_path: "{{ argocd_helm_binary }}"
+
+- name: Apply App-of-Apps manifest
+  kubernetes.core.k8s:
+    state: present
+    namespace: argocd
+    definition: "{{ lookup('file', 'app-of-apps.yml') }}"
 
 - name: Install Argo CLI
   become: true

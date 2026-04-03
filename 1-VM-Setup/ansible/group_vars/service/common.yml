@@ -2,14 +2,14 @@ common_extra_packages:
 - git
 - kubectl
 - dnsmasq
-- helm
 - python3-kubernetes
-
-common_extra_apt_repositories:
-- name: helm
-  repo: "https://packages.buildkite.com/helm-linux/helm-debian/any/"
-  suites: any
-  components: main
-  key: "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey"
+#- tektoncd-cli
 
 argocd_version: v3.3.6
+
+# common_extra_apt_repositories:
+# - name: tekton
+#   repo: http://ppa.launchpad.net/tektoncd/cli/ubuntu
+#   suites: eoan
+#   components: main
+#   key: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xa40e52296e4cf9f90dd1e3bb3efe0e0a2f2f60aa
