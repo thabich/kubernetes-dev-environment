@@ -1,3 +1,16 @@
+- name: Create a Deployment by reading the definition from a local file
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ item }}"
+  loop:
+  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.from_yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml
+  when: cilium_use_gateway_api|bool
+
+
 - name: Add cilium helm repo
   kubernetes.core.helm_repository:
     name: cilium
@@ -12,6 +25,14 @@
     values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
     binary_path: "{{ cilium_helm_binary }}"
 
+- name: Create IP pool got L2 announcements
+  kubernetes.core.helm:
+    name: cilium
+    release_namespace: kube-system
+    chart_ref: cilium/cilium
+    values: "{{ lookup('template', 'lb-ip-pool.yml.j2') | from_yaml }}"
+    binary_path: "{{ cilium_helm_binary }}"
+
 - name: Install Cilium CLI
   become: true
   ansible.builtin.unarchive:
@@ -24,3 +45,4 @@
   ansible.builtin.lineinfile:
     path: "/home/{{ cilium_admin_user }}/.bashrc"
     line: "source <(cilium completion bash)"
+

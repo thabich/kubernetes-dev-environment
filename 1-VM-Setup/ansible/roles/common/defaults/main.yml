@@ -11,7 +11,7 @@ common_domain: "{{ domain }}"
 
 common_internal_network: "{{ internal_network | default('10.0.3.0/24') }}"
 common_dhcp_range_start: "{{ common_internal_network | ansible.utils.ipaddr('5') | ansible.utils.ipaddr('address')  }}"
-common_dhcp_range_end: "{{ common_internal_network | ansible.utils.ipaddr('-2') | ansible.utils.ipaddr('address') }}"
+common_dhcp_range_end: "{{ common_internal_network | ansible.utils.ipaddr('100') | ansible.utils.ipaddr('address') }}"
 common_dhcp_lease_time: "1h"
 common_dhcp_interface: "{{ dhcp_interface | default('enp0s9') }}" 
 common_service_host_ip: "{{ common_internal_network | ansible.utils.ipaddr('3') }}"
