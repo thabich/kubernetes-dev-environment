@@ -1,3 +1,5 @@
 **/venv/
 **/.vagrant/
 **/.vagrant.d/
+**/id_rsa
+**/*.key

@@ -17,9 +17,15 @@
   name: Deploy Kubernetes
   become: false
   roles:
+    - role: python
+      tags: [python]
     - role: helm
       tags: [helm]
     - role: cilium
       tags: [cilium]
     - role: argocd
       tags: [argocd]
+    - role: external-access
+      tags: [external-access]
+    - role: squid
+      tags: [squid]

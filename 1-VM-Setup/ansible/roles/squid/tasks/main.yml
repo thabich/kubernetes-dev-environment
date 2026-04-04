@@ -1,0 +1,28 @@
+- name: Install binaries
+  become: true
+  ansible.builtin.apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - squid
+
+- name: Config
+  become: true
+  ansible.builtin.template:
+    src: squid.conf.j2
+    dest: /etc/squid/squid.conf
+    mode: "0644"
+    validate: "squid -k parse -f %s"
+  notify: Reload Squid
+
+- name: Whitelist
+  become: true
+  ansible.builtin.copy:
+    content: "{{ (squid_default_whitelist_domains + squid_custom_whitelist_domains) | join('\n') }}\n"
+    dest: /etc/squid/whitelist
+    mode: "0644"
+  notify: Reload Squid
+
+

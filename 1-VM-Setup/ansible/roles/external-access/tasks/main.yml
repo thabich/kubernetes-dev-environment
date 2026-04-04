@@ -1,0 +1,22 @@
+- name: Create IP pool and policy
+  kubernetes.core.k8s:
+    state: present
+    template: 'lb-ip-pool.yml.j2'
+
+- name: Create Central Gateway
+  kubernetes.core.k8s:
+    state: present
+    template: 'gateway.yml.j2'
+
+- name: Get IP of Gateway
+  ansible.builtin.command:
+    cmd: "kubectl get gateway -n kube-system central -o jsonpath='{ .status.addresses[0].value }'"
+  register: gateway_ip
+
+- name: Set wildcard DNS record for gateway
+  become: true
+  ansible.builtin.lineinfile:
+      path: /etc/dnsmaq.d/03-ansible-dns.conf
+      create: true
+      line: "address=/k8s.findichgut.net/{{ gateway_ip.stdout}}"
+      regexp: '^address=/k8s\.findichgut\.net/'

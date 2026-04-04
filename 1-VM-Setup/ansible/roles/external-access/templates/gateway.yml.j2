@@ -1,0 +1,13 @@
+kind: Gateway
+metadata:
+  name: central
+  namespace: kube-system
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - allowedRoutes:
+      namespaces:
+        from: All
+    name: http-listener
+    port: 80
+    protocol: HTTP

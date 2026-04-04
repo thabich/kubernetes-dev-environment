@@ -5,4 +5,7 @@ cilium_use_gateway_api: "{{ (not use_kube_proxy)|bool | ternary(true, false) }}"
 cilium_l2_announcements: "{{ (not use_kube_proxy)|bool | ternary(true, false) }}"
 cilium_use_ingress: false 
 cilium_gateway_api_version: "v1.4.1"
-cilium_l2_announcements_interfact: "{{ dhcp_interface }}"
+cilium_l2_announcements_interface: "{{ dhcp_interface }}"
+cilium_lb_ip_pool_start: "{{ internal_network | ansible.utils.ipaddr('101') | ansible.utils.ipaddr('address')  }}"
+cilium_lb_ip_pool_end: "{{ internal_network | ansible.utils.ipaddr('200') | ansible.utils.ipaddr('address')  }}"
+cilium_version: 1.20.0-pre.1

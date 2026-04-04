@@ -103,10 +103,12 @@
 
 - name: Autocompletion
   become: true
+  run_once: true
+  delegate_to: "{{ groups['service'][0] }}"
   ansible.builtin.blockinfile:
     path: "/home/{{ kubernetes_admin_user }}/.bashrc"
     block: |
       source <(kubectl completion bash)
       alias k=kubectl
       complete -o default -F __start_kubectl k
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    marker: "### {mark} ANSIBLE MANAGED BLOCK"

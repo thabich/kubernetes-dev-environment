@@ -11,9 +11,10 @@
 
 - name: Add sudo permissions
   community.general.sudoers:
-    name: Allow sudo for admin user
+    name: "{{ common_admin_user }}"
     user: "{{ common_admin_user }}"
     commands: ALL
+    runas: ALL
 
 - name: Lock  password for vagrant user
   ansible.builtin.user:

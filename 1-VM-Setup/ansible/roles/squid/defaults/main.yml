@@ -1,0 +1,12 @@
+squid_http_port: 3128
+squid_src_networks:
+- 192.168.0.0/16
+
+squid_safe_ports:
+- 80
+- 443
+
+squid_default_whitelist_domains: 
+- ".{{ domain }}"
+
+squid_custom_whitelist_domains: []

@@ -1,15 +1,18 @@
-- name: Create a Deployment by reading the definition from a local file
+- name: Create CRDs for Gateway API
+  vars:
+    base_url: https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd
   kubernetes.core.k8s:
     state: present
-    src: "{{ item }}"
+    src: "{{ base_url }}/{{ item }}"
   loop:
-  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.from_yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/{{ cilium_gateway_api_version }}/config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml
+    - standard/gateway.networking.k8s.io_gatewayclasses.yaml
+    - standard/gateway.networking.k8s.io_gateways.yaml
+    - standard/gateway.networking.k8s.io_grpcroutes.yaml
+    - standard/gateway.networking.k8s.io_httproutes.yaml
+    - standard/gateway.networking.k8s.io_referencegrants.yaml
+    - standard/gateway.networking.k8s.io_backendtlspolicies.yaml
+    - experimental/gateway.networking.k8s.io_tlsroutes.yaml
   when: cilium_use_gateway_api|bool
-
 
 - name: Add cilium helm repo
   kubernetes.core.helm_repository:
@@ -21,17 +24,11 @@
   kubernetes.core.helm:
     name: cilium
     release_namespace: kube-system
+    chart_version: "{{ cilium_version }}"
     chart_ref: cilium/cilium
     values: "{{ lookup('template', 'values.yml.j2') | from_yaml }}"
     binary_path: "{{ cilium_helm_binary }}"
 
-- name: Create IP pool got L2 announcements
-  kubernetes.core.helm:
-    name: cilium
-    release_namespace: kube-system
-    chart_ref: cilium/cilium
-    values: "{{ lookup('template', 'lb-ip-pool.yml.j2') | from_yaml }}"
-    binary_path: "{{ cilium_helm_binary }}"
 
 - name: Install Cilium CLI
   become: true
@@ -39,6 +36,11 @@
     src: https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz
     dest: /usr/local/bin
     remote_src: true
+
+# # Workaround until 1.20.x is stable
+# - name: Upgrade Cilium
+#   ansible.builtin.command:
+#     cmd: cilium upgrade --version 1.20.0-pre.1
 
 - name: Autocompletion
   become: true

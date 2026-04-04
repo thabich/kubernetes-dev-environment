@@ -1,0 +1,20 @@
+http_port {{ squid_http_port }}
+
+{% for network in squid_src_networks %}
+acl allowed_networks src {{ network }}
+{% endfor %}
+
+acl whitelist dstdomain "/etc/squid/whitelist"
+
+{% for port in squid_safe_ports %}
+acl Safe_ports port {{ port}}
+{% endfor %}
+
+acl CONNECT method CONNECT
+
+http_access deny !Safe_ports
+http_access deny CONNECT !Safe_ports
+
+http_access allow allowed_networks whitelist
+
+http_access deny all
