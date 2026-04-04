@@ -16,7 +16,7 @@ spec:
       - $values/cert-manager.yml
   - repoURL: https://github.com/thabich/kubernetes-dev-environment.git
     targetRevision: feature/setup # Use current version
-    path: /2-App-Setup/argocd/apps/values/
+    path: /2-App-Setup/argocd/apps/values
     ref: values
 
   destination:
