@@ -14,7 +14,7 @@ spec:
     helm:
       valueFiles:
       - $values/2-App-Setup/argocd/apps/values/cert-manager.yml
-      values:
+      values: |
         crds:
           enabled: true
   - repoURL: https://github.com/thabich/kubernetes-dev-environment.git
