@@ -10,7 +10,7 @@ spec:
   sources:
   - repoURL: https://charts.jetstack.io
     chart: cert-manager
-    targetRevision: v1.14.0 # Use current version
+    targetRevision: v1.20.1 # Use current version
     helm:
       valueFiles:
       - $values/2-App-Setup/argocd/apps/values/cert-manager.yml
