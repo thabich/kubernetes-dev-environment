@@ -27,3 +27,4 @@ spec:
       prune: true
     syncOptions:
       - ServerSideApply=true # Critical for CRDs
+      - CreateNamespace=true
