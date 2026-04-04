@@ -3,7 +3,7 @@
     ansible_become_user: "{{ item.user }}"
     ansible_become: "{{ item.user != ansible_user }}"
   ansible.builtin.pip:
-    requirements: "{{ item.requirements|default('omit') }
+    requirements: "{{ item.requirements|default(omit) }}"
     virtualenv: "{{ item.venv|default(python_default_venv) }}"
     name: "{{ item.name|default(omit)}}"
   loop: "{{ python_pip_packages }}"
