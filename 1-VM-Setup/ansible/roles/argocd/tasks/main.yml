@@ -33,9 +33,4 @@
     url: "https://github.com/argoproj/argo-cd/releases/download/{{ argocd_version }}/argocd-linux-amd64"
     dest: /usr/local/bin/argocd
     mode: "0755"
-
-- name: Autocompletion
-  become: true
-  ansible.builtin.lineinfile:
-    path: "/home/{{ argocd_admin_user }}/.bashrc"
-    line: "source <(argocd completion bash)" 
+  notify: Autocompletion
