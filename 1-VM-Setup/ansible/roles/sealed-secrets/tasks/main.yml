@@ -1,0 +1,28 @@
+# Install Sealed Secrets in case it's Ansible managed, otherwise only install CLI
+- name: Add sealed secrets helm repo
+  kubernetes.core.helm_repository:
+    name: sealed-secrets
+    repo_url: https://bitnami-labs.github.io/sealed-secrets
+    binary_path: "{{ sealed_secrets_helm_binary }}"
+  when: sealed_secrets_ansible_managed|bool
+
+- name: Install sealed-secrets
+  kubernetes.core.helm:
+    name: sealed-secrets
+    release_namespace: kube-system
+    chart_ref: sealed-secrets/sealed-secrets
+    chart_version: "{{ sealed_secrets_chart_version }}"
+  when: sealed_secrets_ansible_managed|bool
+
+
+- name: Install kubeseal
+  ansible.builtin.command:
+    cmd: bash
+    stdin: "{{ lookup('file', 'kubeseal-install.sh') }}"
+
+
+- name: Restore sealed secret
+  kubernetes.core.k8s:
+    state: present
+    namespace: kube-syste,
+    definition: "{{ lookup('file', 'sealed-secret-secret.vault') }}"

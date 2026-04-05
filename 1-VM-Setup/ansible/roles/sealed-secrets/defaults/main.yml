@@ -1,0 +1,3 @@
+sealed_secrets_helm_binary: '/usr/local/bin/helm-3'
+sealed_secrets_ansible_managed: false
+sealed_secrets_chart_version: 2.18.3

@@ -1,7 +1,10 @@
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: central
   namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: devca
 spec:
   gatewayClassName: cilium
   listeners:
@@ -11,3 +14,14 @@ spec:
     name: http-listener
     port: 80
     protocol: HTTP
+  - name: https-listener
+    hostname: "*.{{ external_access_domain }}"
+    port: 443
+    protocol: HTTPS
+    allowedRoutes:
+      namespaces:
+        from: All
+    tls:
+      mode: Terminate
+      certificateRefs:
+        - name: central-gateway-tls

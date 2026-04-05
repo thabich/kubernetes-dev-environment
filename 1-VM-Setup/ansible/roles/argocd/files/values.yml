@@ -43,7 +43,7 @@ crds:
 global:
   # -- Default domain used by all components
   ## Used for ingresses, certificates, SSO, notifications, etc.
-  domain: argocd.example.com
+  domain: argocd.k8s.findichgut.net
 
   # -- Runtime class name for all components
   runtimeClassName: ""
@@ -431,6 +431,7 @@ configs:
   # Argo CD configuration parameters
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cmd-params-cm.yaml
   params:
+    server.insecure: "true"
     # -- Create the argocd-cmd-params-cm configmap
     # If false, it is expected the configmap will be created by something else.
     create: true

@@ -4,6 +4,9 @@ common_extra_packages:
 - dnsmasq
 - python3-kubernetes
 - python3-yaml
+- python3-packaging
+- python3-virtualenv
+- jq
 #- tektoncd-cli
 
 argocd_version: v3.3.6

@@ -18,5 +18,5 @@
   ansible.builtin.lineinfile:
       path: /etc/dnsmaq.d/03-ansible-dns.conf
       create: true
-      line: "address=/k8s.findichgut.net/{{ gateway_ip.stdout}}"
-      regexp: '^address=/k8s\.findichgut\.net/'
+      line: "address=/{{ external_access_domain }}/{{ gateway_ip.stdout}}"
+      regexp: "^address=/{{ external_access_domain | regex_escape }}/"

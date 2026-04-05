@@ -1,4 +1,4 @@
-python_admin_user: "{{ admin_user | default('vmadm')''}}"
+python_admin_user: "{{ admin_user | default('vmadm')}}"
 python_default_venv: "{{ ansible_facts['user_dir'] }}/venv/"
 python_pip_packages:
 - name: ansible

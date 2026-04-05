@@ -25,6 +25,8 @@
       tags: [cilium]
     - role: argocd
       tags: [argocd]
+    - role: sealed-secrets
+      tags: [sealed-secrets]
     - role: external-access
       tags: [external-access]
     - role: squid
