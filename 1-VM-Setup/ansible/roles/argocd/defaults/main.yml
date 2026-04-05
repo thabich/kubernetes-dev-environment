@@ -1,3 +1,5 @@
 argocd_admin_user: "{{ admin_user | default('vmadm') }}"
 argocd_version: v3.3.6
 argocd_helm_binary: "/usr/local/bin/helm-3"
+argocd_hostname: "argocd.{{ domain }}"
+argocd_use_gateway_api: true

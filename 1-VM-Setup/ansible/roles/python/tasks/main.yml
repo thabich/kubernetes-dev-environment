@@ -1,4 +1,6 @@
 - name: Install specified python requirements in indicated (virtualenv)
+  environment:
+    TMPDIR: /var/tmp
   vars:
     ansible_become_user: "{{ item.user }}"
     ansible_become: "{{ item.user != ansible_user }}"

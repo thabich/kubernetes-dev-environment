@@ -1,0 +1,26 @@
+## 
+# Used to deploy single resources, which are reuired for infrastructure services
+# instead of creating an own app for each
+##
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra-resources
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/thabich/kubernetes-dev-environment.git
+    targetRevision: feature/setup
+    path: 2-App-Setup/argocd/resources/enabled
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

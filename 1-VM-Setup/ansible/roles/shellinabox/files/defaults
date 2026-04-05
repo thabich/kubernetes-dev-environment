@@ -1,0 +1,7 @@
+SHELLINABOX_DAEMON_START=1
+SHELLINABOX_PORT=4200
+THEME_DIR="/etc/shellinabox/themes"
+
+css_args="Brewer Dark:+/etc/shellinabox/themes/theme-brewer-dark.css,Chalk Dark:-/etc/shellinabox/themes/theme-chalk-dark.css,Eighties Dark:-/etc/shellinabox/themes/theme-eighties-dark.css,Isotope Dark:-/etc/shellinabox/themes/theme-isotope-dark.css,Londontube Dark:-/etc/shellinabox/themes/theme-londontube-dark.css,Monokai Dark:-/etc/shellinabox/themes/theme-monokai-dark.css,Shapeshifter Dark:-/etc/shellinabox/themes/theme-shapeshifter-dark.css"
+
+SHELLINABOX_ARGS="--localhost-only --no-beep --static-file=styles.css:${THEME_DIR}/shellinabox.css --user-css=\"${css_args}\""

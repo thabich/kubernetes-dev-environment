@@ -1,0 +1,1 @@
+shellinabox_hostname: "shell.{{ domain }}"

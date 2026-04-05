@@ -31,9 +31,10 @@ def ansible_provision(node)
             "nodes" => (1..N).map { |i| "%s%02d" % [NODE_NAME_PREFIX, i] },
             "service" => [SERVICE_NODE_NAME]
         }
-        ansible.tags = "all,never"
+        ansible.tags = "shellinabox"
         ansible.limit = "all"
         ansible.raw_arguments = ["-e", "ansible_ssh_pipelining=True"]
+        ansible.ask_vault_pass = true
     end
 end
 

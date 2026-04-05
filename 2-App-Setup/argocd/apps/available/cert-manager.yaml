@@ -17,6 +17,7 @@ spec:
   - repoURL: https://github.com/thabich/kubernetes-dev-environment.git
     targetRevision: feature/setup # Use current version
     ref: values
+    path: /2-App-Setup/argocd/apps/values/
 
   destination:
     server: https://kubernetes.default.svc

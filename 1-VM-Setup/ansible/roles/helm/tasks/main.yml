@@ -32,6 +32,7 @@
     stdin: "{{ installer.content }}"
   register: installer_status
   changed_when: installer_status.stdout is not regex(".*already latest.*")
+  notify: Autocompletion
 
 - name: Set default version
   become: true
@@ -39,14 +40,6 @@
     state: link
     src: "/usr/local/bin/helm-{{ helm_default_version }}"
     path: "/usr/local/bin/helm"
-
-
-- name: Autocompletion
-  become: true
-  ansible.builtin.lineinfile:
-    path: "/home/{{ helm_admin_user }}/.bashrc"
-    line: "source <(helm completion bash)"
-
 
 - name: Plugins for vagrant user
   become: false

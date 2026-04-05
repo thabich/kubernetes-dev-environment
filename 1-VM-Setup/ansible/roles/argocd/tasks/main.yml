@@ -19,6 +19,14 @@
     namespace: argocd
     definition: "{{ lookup('file', 'app-of-apps.yml') }}"
 
+- name: ArgoCD HTTProute
+  kubernetes.core.k8s:
+    state: present
+    namespace: argocd
+    template: httproute.yml.j2
+  when: argocd_use_gateway_api|bool
+
+
 - name: Install Argo CLI
   become: true
   ansible.builtin.get_url:

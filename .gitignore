@@ -3,3 +3,4 @@
 **/.vagrant.d/
 **/id_rsa
 **/*.key
+**/*.vault

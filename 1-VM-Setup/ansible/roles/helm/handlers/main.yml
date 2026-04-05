@@ -1,0 +1,4 @@
+- name: Autocompletion
+  become: true
+  ansible.builtin.shell:
+    cmd: "helm completion bash > /etc/bash_completion.d/helm"

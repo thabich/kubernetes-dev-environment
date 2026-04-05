@@ -5,6 +5,7 @@ squid_src_networks:
 squid_safe_ports:
 - 80
 - 443
+- 4200
 
 squid_default_whitelist_domains: 
 - ".{{ domain }}"

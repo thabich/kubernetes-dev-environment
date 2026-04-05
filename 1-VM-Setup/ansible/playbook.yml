@@ -14,7 +14,7 @@
 
 - hosts: service
   run_once: true
-  name: Deploy Kubernetes
+  name: Deploy Service Host
   become: false
   roles:
     - role: python
@@ -25,9 +25,11 @@
       tags: [cilium]
     - role: argocd
       tags: [argocd]
-    - role: sealed-secrets
-      tags: [sealed-secrets]
     - role: external-access
       tags: [external-access]
     - role: squid
       tags: [squid]
+    - role: sealed-secrets
+      tags: [sealed-secrets]
+    - role: shellinabox
+      tags: [shellinabox]

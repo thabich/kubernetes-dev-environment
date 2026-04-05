@@ -1,0 +1,5 @@
+- name: Autocompletion
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/home/{{ cilium_admin_user }}/.bashrc"
+    line: "source <(cilium completion bash)"

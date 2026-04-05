@@ -1,0 +1,4 @@
+- name: Autocompletion
+  become: true
+  ansible.builtin.shell:
+    cmd: "argocd completion bash > /etc/bash_completion.d/argocd"
