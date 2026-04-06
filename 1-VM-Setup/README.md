@@ -13,7 +13,6 @@ TASK [kubernetes : Generate join command]
 
 
 ToDos features:
-- deploy app of apps on Argo
 - make ansible and playbooks available on management host
 - split common role and make features more generic (proxmox prep)
 - make sure the playbooks are working with Ubuntu and Rocky

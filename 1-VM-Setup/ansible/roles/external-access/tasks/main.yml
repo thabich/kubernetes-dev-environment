@@ -16,7 +16,8 @@
 - name: Set wildcard DNS record for gateway
   become: true
   ansible.builtin.lineinfile:
-      path: /etc/dnsmasq.d/03-ansible-dns.conf
-      create: true
-      line: "address=/{{ external_access_domain }}/{{ gateway_ip.stdout}}"
-      regexp: "^address=/{{ external_access_domain | regex_escape }}/"
+    path: /etc/dnsmasq.d/03-ansible-dns.conf
+    create: true
+    line: "address=/{{ external_access_domain }}/{{ gateway_ip.stdout}}"
+    regexp: "^address=/{{ external_access_domain | regex_escape }}/"
+  notify: Restart dnsmasq
