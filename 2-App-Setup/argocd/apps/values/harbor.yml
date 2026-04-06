@@ -59,7 +59,7 @@ expose:
          group: gateway.networking.k8s.io
          kind: Gateway
     # the hostnames for the HTTPRoute
-    hosts: []
+    hosts:
        - "harbor.k8s.findichgut.net"
   clusterIP:
     # The name of ClusterIP service
