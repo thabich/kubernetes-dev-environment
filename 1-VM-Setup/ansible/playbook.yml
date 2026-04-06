@@ -17,12 +17,12 @@
   name: Deploy Service Host
   become: false
   roles:
+    - role: helm
+      tags: [helm]
     - role: cilium
       tags: [cilium]
     - role: python
       tags: [python]
-    - role: helm
-      tags: [helm]
     - role: argocd
       tags: [argocd]
     - role: squid
