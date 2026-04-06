@@ -4,7 +4,7 @@ metadata:
   name: cert-manager
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-2" # Install early
+    argocd.argoproj.io/sync-wave: "-90" # Install early
 spec:
   project: default
   sources:

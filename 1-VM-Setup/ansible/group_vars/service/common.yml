@@ -17,6 +17,7 @@ common_extra_apt_repositories:
   suites: eoan
   components: main
   key: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xa40e52296e4cf9f90dd1e3bb3efe0e0a2f2f60aa
+  
 
 common_dns_cnames:
 - target: manager.k8s.findichgut.net
