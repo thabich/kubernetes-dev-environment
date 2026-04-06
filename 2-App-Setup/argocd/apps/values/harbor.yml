@@ -52,7 +52,7 @@ expose:
     labels: {}
     annotations: {}
     # References to the parent gateways
-    parentRefs: []
+    parentRefs:
        - name: central
          namespace: kube-system
          #sectionName: https
