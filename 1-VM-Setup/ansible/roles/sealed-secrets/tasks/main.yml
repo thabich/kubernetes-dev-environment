@@ -28,3 +28,13 @@
     stdin: "{{ lookup('file', 'sealed-secrets-secret.vault') }}"
   register: apply_seal_secret
   changed_when: '"unchanged" not in apply_seal_secret.stdout'
+
+- name: Restart Pod to activate the new key
+  kubernetes.core.k8s:
+    api_version: v1
+    namespace: kube-system
+    kind: Pod
+    delete_all: true
+    state: absent
+    label_selectors:
+      - app.kubernetes.io/name=sealed-secrets

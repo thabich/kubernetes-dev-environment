@@ -17,19 +17,19 @@
   name: Deploy Service Host
   become: false
   roles:
+    - role: cilium
+      tags: [cilium]
     - role: python
       tags: [python]
     - role: helm
       tags: [helm]
-    - role: cilium
-      tags: [cilium]
     - role: argocd
       tags: [argocd]
-    - role: external-access
-      tags: [external-access]
     - role: squid
       tags: [squid]
-    - role: sealed-secrets
-      tags: [sealed-secrets]
     - role: shellinabox
       tags: [shellinabox]
+    - role: external-access
+      tags: [external-access]
+    - role: sealed-secrets
+      tags: [sealed-secrets]
