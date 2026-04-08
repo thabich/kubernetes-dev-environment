@@ -47,3 +47,7 @@ spec:
       jsonPointers:
         - /spec/template/metadata/annotations/checksum~1secret
         - /spec/template/metadata/annotations/checksum~1config
+    - kind: Secret
+      group: ""
+      jsonPointers:
+        - /data
