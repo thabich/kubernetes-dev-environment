@@ -213,7 +213,7 @@ storageClasses:
     server: 10.0.3.3
     share: /exports
     subDir: "${pvc.metadata.namespace}/${pvc.metadata.name}"
-  reclaimPolicy: Retain'
+  reclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce
     - ReadWriteMany
