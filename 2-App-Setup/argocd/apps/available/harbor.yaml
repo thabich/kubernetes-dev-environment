@@ -53,3 +53,8 @@ spec:
       group: ""
       jsonPointers:
         - /data
+    - kind: HTTPRoute
+      group: gateway.networking.k8s.io
+      jqPathExpressions:
+        - '.spec.rules[].backendRefs[].group'
+        - '.spec.rules[].backendRefs[].kind'
