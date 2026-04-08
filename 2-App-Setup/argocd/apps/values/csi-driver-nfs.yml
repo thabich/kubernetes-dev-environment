@@ -185,7 +185,7 @@ imagePullSecrets: []
 
 ## StorageClass resource example:
 storageClass:
-  create: true
+  create: false
 #   name: nfs-csi
 #   annotations:
 #     storageclass.kubernetes.io/is-default-class: "true"
@@ -218,28 +218,3 @@ storageClasses:
   mountOptions:
     - hard
     - nfsvers=4.1
-
-
-#   - name: nfs-delete
-#     annotations:
-#       storageclass.kubernetes.io/is-default-class: "true"
-#     parameters:
-#       server: nfs-server.default.svc.cluster.local
-#       share: /
-#       # subDir:
-#       # mountPermissions: "0"
-#       # csi.storage.k8s.io/provisioner-secret is only needed for providing mountOptions in DeleteVolume
-#       # csi.storage.k8s.io/provisioner-secret-name: "mount-options"
-#       # csi.storage.k8s.io/provisioner-secret-namespace: "default"
-#     reclaimPolicy: Delete
-#     volumeBindingMode: Immediate
-#     mountOptions:
-#       - nfsvers=4.1
-#   - name: nfs-retain
-#     parameters:
-#       server: nfs-server.default.svc.cluster.local
-#       share: /
-#     reclaimPolicy: Retain
-#     volumeBindingMode: Immediate
-#     mountOptions:
-#       - nfsvers=4.1
