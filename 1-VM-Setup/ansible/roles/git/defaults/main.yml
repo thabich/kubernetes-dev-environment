@@ -1,0 +1,3 @@
+git_ssh_opts: "-i {{ item.key|default('gitdeploy.vault') }})"
+
+ 

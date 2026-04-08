@@ -1,0 +1,3 @@
+- name: Enable exports
+  ansible.builtin.command:
+    cmd: exportfs -ra

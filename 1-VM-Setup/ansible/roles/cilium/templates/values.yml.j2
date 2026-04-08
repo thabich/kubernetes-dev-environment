@@ -1702,9 +1702,9 @@ hubble:
       extraIpAddresses: []
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
-    enabled: false
+    enabled: true
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
-    rollOutPods: false
+    rollOutPods: true
     # -- Hubble-relay container image.
     image:
       # @schema
@@ -1945,7 +1945,7 @@ hubble:
       level: ~
   ui:
     # -- Whether to enable the Hubble UI.
-    enabled: false
+    enabled: true
     standalone:
       # -- When true, it will allow installing the Hubble UI only, without checking dependencies.
       # It is useful if a cluster already has cilium and Hubble relay installed and you just
@@ -1969,7 +1969,7 @@ hubble:
         #         - key: ca.crt
         #           path: hubble-relay-ca.crt
     # -- Roll out Hubble-ui pods automatically when configmap is updated.
-    rollOutPods: false
+    rollOutPods: true
     tls:
       client:
         # -- Name of the Secret containing the client certificate and key for Hubble UI

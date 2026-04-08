@@ -20,3 +20,28 @@ common_default_gateway: "{{ common_internal_network | ansible.utils.ipaddr('2') 
 common_dns_host_records: []
 common_dns_cnames: []
 common_upstream_dns: "8.8.8.8"
+
+common_bashrc_block: |
+  if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      alias ls='ls --color=auto'
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
+  fi
+  alias ll='ls -alF'
+  alias la='ls -A'
+  alias l='ls -CF'
+
+common_extra_bashrc_block: ""
+
+common_vim_settings: |
+  unlet! skip_defaults_vim
+  source $VIMRUNTIME/defaults.vim
+  " Your custom overrides follow below
+  set mouse=
+  syntax on
+  set backspace=indent,eol,start
+  set tabstop=2 shiftwidth=2 expandtab
+
+common_extra_vim_settings: ""

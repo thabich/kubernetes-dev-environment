@@ -1,0 +1,11 @@
+- name: Clone Git Repositories
+  vars:
+    ansible_become_user: "{{ item.user }}"
+    ansible_become: "{{ item.user != ansible_user }}"
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    clone: "{{ item.clone|default(true)}}"
+    update: "{{ item.update_repo|default(true)}}"
+  loop: "{{ git_repositories }}"
+  no_log: "{{ git_no_log | default(true) }}"

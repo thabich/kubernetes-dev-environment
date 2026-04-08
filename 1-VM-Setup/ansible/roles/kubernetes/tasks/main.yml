@@ -111,4 +111,4 @@
       source <(kubectl completion bash)
       alias k=kubectl
       complete -o default -F __start_kubectl k
-    marker: "### {mark} ANSIBLE MANAGED BLOCK"
+    marker: "### {mark} ANSIBLE MANAGED BLOCK (KUBERNETES)"

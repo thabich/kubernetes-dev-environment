@@ -1,0 +1,44 @@
+- name: Get latest Tekton CLI release info
+  uri:
+    url: https://api.github.com/repos/tektoncd/cli/releases/latest
+    return_content: yes
+  register: release_info
+
+- name: Detect system architecture
+  set_fact:
+    arch: "{{ 'Linux_x86_64' if ansible_architecture == 'x86_64' else
+              'Linux_arm64' if ansible_architecture == 'aarch64' else
+              'Darwin_x86_64' }}"
+
+- name: Extract latest version and download URL
+  set_fact:
+    latest_version: "{{ release_info.json.tag_name }}"
+    latest_url: >-
+      {{ (release_info.json.assets
+          | selectattr('name','search',arch)
+          | map(attribute='browser_download_url')
+          | list | first) | default('') }}
+
+- name: Fail if no asset found
+  fail:
+    msg: "No Tekton CLI asset found for {{ arch }}"
+  when: latest_url == ''
+
+- name: Check installed Tekton CLI version
+  command: tkn version
+  register: tkn_version
+  failed_when: false
+  changed_when: false
+
+- name: Download Tekton CLI if outdated
+  get_url:
+    url: "{{ latest_url }}"
+    dest: /tmp/tektoncd-cli.tar.gz
+  when: latest_version not in tkn_version.stdout
+
+- name: Extract Tekton CLI binary
+  unarchive:
+    src: /tmp/tektoncd-cli.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+  when: latest_version not in tkn_version.stdout

@@ -17,12 +17,16 @@
   name: Deploy Service Host
   become: false
   roles:
+    - role: nfs-server
+      tags: [nfs-server]
     - role: helm
       tags: [helm]
     - role: cilium
       tags: [cilium]
     - role: python
       tags: [python]
+    - role: git
+      tags: [git]
     - role: argocd
       tags: [argocd]
     - role: squid
@@ -33,3 +37,5 @@
       tags: [external-access]
     - role: sealed-secrets
       tags: [sealed-secrets]
+    - role: tekton-cli
+      tags: [tekton-cli]

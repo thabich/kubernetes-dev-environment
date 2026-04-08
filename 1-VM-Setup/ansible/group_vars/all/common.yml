@@ -30,6 +30,7 @@ common_default_packages:
 - rsyslog
 - unattended-upgrades
 - kubectl
+- nfs-common
 
 common_default_hold_packages:
 - grub-pc

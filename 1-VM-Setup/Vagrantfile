@@ -61,6 +61,7 @@ Vagrant.configure("2") do |config|
 
     (1..N).each do |i|
         config.vm.define "%s%02d" % [NODE_NAME_PREFIX, i]  do |node|
+            node.vm.synced_folder "data/", "/exports", owner: "nobody", group: "nogroup"
             node.vm.disk :disk, size: NODE_DISK_SIZE, primary: true
             node.vm.hostname = "%s%02d" % [NODE_NAME_PREFIX, i]  + "." + DOMAIN
             node.vm.provider "virtualbox" do |v|

@@ -20,3 +20,17 @@
   ansible.builtin.user:
     name: vagrant
     password_lock: true
+
+- name: Create user settings (bashrc)
+  ansible.builtin.blockinfile:
+    path: "/home/{{ common_admin_user }}/.bashrc"
+    block: "{{ common_bashrc_block + common_extra_bashrc_block }}"
+    marker: "### {mark} ANSIBLE MANAGED BLOCK (COMMON)"
+
+- name: Create VIM user settings
+  ansible.builtin.copy:
+    dest: "/home/{{ common_admin_user }}/.vimrc"
+    content: "{{ common_vim_settings + common_extra_vim_settings }}"
+    owner: "{{ common_admin_user }}"
+    group: "{{ common_admin_user }}"
+

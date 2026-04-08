@@ -7,18 +7,15 @@ common_extra_packages:
 - python3-packaging
 - python3-virtualenv
 - jq
-- tektoncd-cli
 
 argocd_version: v3.3.6
-
-common_extra_apt_repositories:
-- name: tekton
-  repo: http://ppa.launchpad.net/tektoncd/cli/ubuntu
-  suites: eoan
-  components: main
-  key: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xa40e52296e4cf9f90dd1e3bb3efe0e0a2f2f60aa
-  
 
 common_dns_cnames:
 - target: manager.k8s.findichgut.net
   fqdn: shell.k8s.findichgut.net
+
+
+git_repositories:
+- repo: https://thabich:{{ git_pat.courses }}@github.com/thabich/courses.git
+  dest: "/home/{{ admin_user }}/checkouts/"
+  user: "{{ admin_user }}"

@@ -132,7 +132,7 @@ externalURL: https://harbor.k8s.findichgut.net
 # For storing images and charts, you can also use "azure", "gcs", "s3",
 # "swift" or "oss". Set it in the "imageChartStorage" section
 persistence:
-  enabled: false
+  enabled: true
   # Setting it to "keep" to avoid removing PVCs during a helm delete
   # operation. Leaving it empty will delete PVCs after the chart deleted
   # (this does not apply for PVCs that are created for internal database
@@ -146,7 +146,7 @@ persistence:
       # Specify the "storageClass" used to provision the volume. Or the default
       # StorageClass will be used (the default).
       # Set it to "-" to disable dynamic provisioning
-      storageClass: ""
+      storageClass: "csi-nfs"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi
@@ -154,7 +154,7 @@ persistence:
     jobservice:
       jobLog:
         existingClaim: ""
-        storageClass: ""
+        storageClass: "csi-nfs"
         subPath: ""
         accessMode: ReadWriteOnce
         size: 1Gi
@@ -163,7 +163,7 @@ persistence:
     # be ignored
     database:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "csi-nfs"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
@@ -172,14 +172,14 @@ persistence:
     # be ignored
     redis:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "csi-nfs"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 1Gi
       annotations: {}
     trivy:
       existingClaim: ""
-      storageClass: ""
+      storageClass: "csi-nfs"
       subPath: ""
       accessMode: ReadWriteOnce
       size: 5Gi

@@ -1,0 +1,36 @@
+- name: Set permissions on export
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "nobody"
+    group: "nogroup"
+    mode: "0777"
+    state: directory
+  loop: "{{ nfs_server_exports }}"
+
+- name: Install binaries
+  become: true
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    -  nfs-kernel-server
+
+- name: Write exports
+  become: true
+  ansible.builtin.template:
+    dest: "/etc/exports"
+    src: "exports.j2"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Enable exports
+
+- name: Enable nfs-server
+  become: true
+  ansible.builtin.systemd:
+    name: nfs-server
+    state: started
+    enabled: true

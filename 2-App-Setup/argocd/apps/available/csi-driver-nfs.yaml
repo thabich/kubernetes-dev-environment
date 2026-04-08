@@ -1,0 +1,38 @@
+https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
+spec:
+  project: default
+  sources:
+  - repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+    chart: csi-driver-nfs
+    targetRevision: v4.13.1 # Use current version
+    helm:
+      valueFiles:
+      - $values/2-App-Setup/argocd/apps/values/csi-driver-nfs.yml
+  - repoURL: https://github.com/thabich/kubernetes-dev-environment.git
+    targetRevision: feature/setup
+    ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 20
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 20m
