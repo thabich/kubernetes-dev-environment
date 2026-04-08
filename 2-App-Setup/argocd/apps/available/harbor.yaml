@@ -36,6 +36,8 @@ spec:
         factor: 2
         maxDuration: 20m
 
+# Checksum are unique per installation
+# Route has default values, which are removed by Kubernetes
   ignoreDifferences:
     - kind: Deployment
       group: apps
@@ -58,3 +60,4 @@ spec:
       jqPathExpressions:
         - '.spec.rules[].backendRefs[].group'
         - '.spec.rules[].backendRefs[].kind'
+        - '.spec.rules[].backendRefs[].matches[].weight'
