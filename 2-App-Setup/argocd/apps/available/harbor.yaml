@@ -60,4 +60,4 @@ spec:
       jqPathExpressions:
         - '.spec.rules[].backendRefs[].group'
         - '.spec.rules[].backendRefs[].kind'
-        - '.spec.rules[].backendRefs[].matches[].weight'
+        - '.spec.rules[].backendRefs[].weight'
