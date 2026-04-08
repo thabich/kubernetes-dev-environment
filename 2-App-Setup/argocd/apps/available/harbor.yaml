@@ -41,6 +41,8 @@ spec:
       group: apps
       jsonPointers:
         - /spec/template/metadata/annotations/checksum~1secret
+        - /spec/template/metadata/annotations/checksum~1secret-core
+                - /spec/template/metadata/annotations/checksum~1secret-jobservice
         - /spec/template/metadata/annotations/checksum~1config
     - kind: StatefulSet
       group: apps
