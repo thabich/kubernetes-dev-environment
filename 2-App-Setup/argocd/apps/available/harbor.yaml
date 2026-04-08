@@ -28,9 +28,22 @@ spec:
     syncOptions:
       - ServerSideApply=true # Critical for CRDs
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true
     retry:
       limit: 20
       backoff:
         duration: 5s
         factor: 2
         maxDuration: 20m
+
+  ignoreDifferences:
+    - kind: Deployment
+      group: apps
+      jsonPointers:
+        - /spec/template/metadata/annotations/checksum~1secret
+        - /spec/template/metadata/annotations/checksum~1config
+    - kind: StatefulSet
+      group: apps
+      jsonPointers:
+        - /spec/template/metadata/annotations/checksum~1secret
+        - /spec/template/metadata/annotations/checksum~1config

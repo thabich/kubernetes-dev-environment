@@ -6,4 +6,4 @@
 **/*.vault
 **/vault.yml
 **/vault.yaml
-1-VM-Setup/data
+data/

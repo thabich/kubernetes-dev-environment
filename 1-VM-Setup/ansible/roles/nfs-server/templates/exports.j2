@@ -1,0 +1,4 @@
+# templates/exports.j2
+{% for export in nfs_server_exports %}
+{{ export.path }} {{ export.subnet }}({{ export.options }})
+{% endfor %}

@@ -37,8 +37,10 @@
   when: latest_version not in tkn_version.stdout
 
 - name: Extract Tekton CLI binary
+  become: true
   unarchive:
     src: /tmp/tektoncd-cli.tar.gz
     dest: /usr/local/bin
     remote_src: yes
+    include: [tkn]
   when: latest_version not in tkn_version.stdout

@@ -1,12 +1,41 @@
-- name: Set permissions on export
+- name: Check if /dev/sdb exists
+  ansible.builtin.stat:
+    path: /dev/sdb
+  register: disk_stat
+
+- name: Create filesystem if not present
+  become: true
+  ansible.builtin.filesystem:
+    fstype: ext4
+    dev: /dev/sdb
+  when: disk_stat.stat.exists
+
+- name: Create mountpoint
   become: true
   ansible.builtin.file:
-    path: "{{ item.path }}"
-    owner: "nobody"
-    group: "nogroup"
-    mode: "0777"
+    path: /exports
     state: directory
-  loop: "{{ nfs_server_exports }}"
+    owner: nobody
+    group: nogroup
+    mode: '0777'
+
+- name: Mount persistent disk
+  become: true
+  ansible.builtin.mount:
+    path: /exports
+    src: /dev/sdb
+    fstype: ext4
+    state: mounted
+
+- name: Ensure fstab entry is present
+  become: true
+  ansible.builtin.mount:
+    path: /exports
+    src: /dev/sdb
+    fstype: ext4
+    opts: defaults
+    state: present
+  notify: Systemd daemon reload
 
 - name: Install binaries
   become: true
@@ -26,7 +55,9 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Enable exports
+  notify:
+  - Enable exports
+  - Restart nfs-server
 
 - name: Enable nfs-server
   become: true

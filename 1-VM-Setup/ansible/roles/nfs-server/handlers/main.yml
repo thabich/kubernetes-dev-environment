@@ -1,3 +1,16 @@
 - name: Enable exports
+  become: true
   ansible.builtin.command:
     cmd: exportfs -ra
+
+- name: Restart nfs-server
+  become: true
+  ansible.builtin.systemd:
+    name: nfs-server
+    state: restarted
+
+
+- name: Systemd daemon reload
+  become: true
+  ansible.builtin.systemd_service:
+    daemon_reload: true
