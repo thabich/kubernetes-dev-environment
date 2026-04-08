@@ -205,10 +205,9 @@ storageClass:
 ## StorageClass resources for creating multiple storage classes:
 ## If you want multiple storage classes with different configurations, use this instead of storageClass above
 storageClasses:
-  apiVersion: storage.k8s.io/v1
-  kind: StorageClass
-  metadata:
-    name: nfs-csi
+- name: nfs-csi
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
   provisioner: nfs.csi.k8s.io
   parameters:
     server: 10.0.3.3
