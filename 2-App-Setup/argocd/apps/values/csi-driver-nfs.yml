@@ -213,12 +213,14 @@ storageClasses:
   parameters:
     server: 10.0.3.3
     share: /exports
-    subDir: ${pvc.metadata.namespace}/${pvc.metadata.name}
+    subDir: "${pvc.metadata.namespace}/${pvc.metadata.name}"
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
   mountOptions:
     - hard
     - nfsvers=4.1
+
+
 #   - name: nfs-delete
 #     annotations:
 #       storageclass.kubernetes.io/is-default-class: "true"
