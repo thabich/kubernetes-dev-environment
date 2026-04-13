@@ -1,0 +1,8 @@
+packages_apt_repositories: []
+packages_extra_apt_repositories: []
+packages_default_packages: []
+packages_extra_packages: []
+packages_default_remove_packages: []
+packages_extra_remove_packages: []
+packages_default_hold_packages: []
+packages_extra_hold_packages: []

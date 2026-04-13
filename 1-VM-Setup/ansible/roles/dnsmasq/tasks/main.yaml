@@ -1,0 +1,26 @@
+# Enable DHCP services on management host.
+- name: Install packages
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg: dnsmasq
+    state: present
+
+- name: Create dnsmasq config
+  ansible.builtin.template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.d/01-ansible.conf
+    mode: "0600"
+    validate: 'dnsmasq --test --conf-file=%s'
+  notify: Restart dnsmasq
+
+- name: Enable dnsmasq
+  ansible.builtin.systemd:
+    name: dnsmasq.service
+    enabled: true
+    state: started
+
+- name: Reserve DHCP leases
+  ansible.builtin.include_tasks:
+    file: dns-freeze.yml
+
+

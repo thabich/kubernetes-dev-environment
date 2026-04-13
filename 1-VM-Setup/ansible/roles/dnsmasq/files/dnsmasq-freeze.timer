@@ -1,0 +1,10 @@
+[Unit]
+Description=Run dnsmasq-freeze every 2 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Unit=dnsmasq-freeze.service
+
+[Install]
+WantedBy=timers.target

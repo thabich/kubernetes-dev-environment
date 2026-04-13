@@ -1,0 +1,3 @@
+- name: Install packages and repos for Debian based systems
+  ansible.builtin.include_tasks:
+    file: "{{ ansible_facts['distribution'] }}/main.yml"

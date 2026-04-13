@@ -1,0 +1,26 @@
+
+dhcp-authoritative
+no-hosts
+dhcp-option=3,{{ dnsmasq_default_gateway }}
+dhcp-option=119,{{ dnsmasq_domain }}
+
+# Route example
+# dhcp-option=121,10.0.4.0/24,10.0.3.3,10.0.5.0/24,10.0.3.4
+
+dhcp-range={{ dnsmasq_dhcp_range_start }},{{ dnsmasq_dhcp_range_end }},{{ dnsmasq_dhcp_lease_time }}
+
+server={{dnsmasq_upstream_dns }}
+domain={{ dnsmasq_domain }}
+domain-needed
+host-record={{ ansible_facts['fqdn'] }},{{ dnsmasq_service_host_ip }}
+
+{% for host_record in dnsmasq_dns_host_records %}
+host-record={{ host_record['fqdn']}},{{ host_record['ip'] }}
+{% endfor %}
+
+{% for cname in dnsmasq_dns_cnames %}
+cname={{ cname['fqdn'] }},{{ cname['target'] }}
+{% endfor %}
+
+interface={{ dnsmasq_dhcp_interface }}
+bind-dynamic

@@ -1,6 +1,7 @@
 # Make sure, that each VM has a uniq ID
-# memory option might be removed again, after ansible was installed on managent host
-# right now, we're running the playbook only via vagrant
+# Not required with properly prepared image
+# keeping this for the case...
+
 - name: Check if touched file exists to know if the keys have already been regenerated
   ansible.builtin.stat:
     path: /etc/.machine-id.regenerated

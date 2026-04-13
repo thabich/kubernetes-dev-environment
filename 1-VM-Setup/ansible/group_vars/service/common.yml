@@ -1,17 +1,16 @@
-common_extra_packages:
+packages_extra_packages:
 - git
-- kubectl
-- dnsmasq
 - python3-kubernetes
 - python3-yaml
 - python3-packaging
 - python3-virtualenv
+- python3-venv
 - jq
 
 argocd_version: v3.3.6
 
-common_dns_cnames:
-- target: manager.k8s.findichgut.net
+dnsmasq_dns_cnames:
+- target: localhost
   fqdn: shell.k8s.findichgut.net
 
 

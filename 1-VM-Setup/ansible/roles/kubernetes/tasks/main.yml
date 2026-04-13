@@ -1,114 +1,23 @@
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  loop:
-    - swap
-    - none
+# General setup, like containerd packages
+- name: Base Setup
+  ansible.builtin.include_tasks:
+    file: base_setup.yml
+  when: kubernetes_role in ['controlplane', 'node']
 
-- name: Disable swap
-  command: swapoff -a
-  when: ansible_facts['swaptotal_mb'] > 0
+# Create the cluster
+- name: Setup Cluster
+  ansible.builtin.include_tasks:
+    file: controlplane.yml
+  when: kubernetes_role == 'controlplane'
 
-- name: Install binaries
-  apt: 
-    name: "{{ packages }}"
-    state: present
-    update_cache: yes
-  vars:
-    packages:
-    - containerd.io
-    - kubelet 
-    - kubeadm 
+# Join the nodes
+- name: Setup nodes
+  ansible.builtin.include_tasks:
+    file: node.yml
+  when: kubernetes_role == 'node'
 
-
-- name: Hold packages
-  ansible.builtin.dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
-  with_items:
-    - kubelet 
-    - kubeadm 
-
-- name: Enable plugins
-  ansible.builtin.lineinfile:
-    path: /etc/containerd/config.toml
-    regex: "^disabled_plugins"
-    state: absent
-  notify: Restart containerd
-
-- name: Enable SystemdCgroups in containerd
-  ansible.builtin.blockinfile:
-    path: /etc/containerd/config.toml
-    block: |
-      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-        SystemdCgroup = true
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-  notify: Restart containerd
-
--
-- name: Configure node ip
-  lineinfile:
-    path: /etc/default/kubelet
-    line: "KUBELET_EXTRA_ARGS=--node-ip={{ ansible_facts[kubernetes_interface]['ipv4']['address'] }}"
-  notify: Restart kubelet
-
-- name: IPv4 Forwarding
-  ansible.builtin.copy:
-    content: "net.ipv4.ip_forward = 1"
-    dest: /etc/sysctl.d/99_kubernetes.conf
-  notify: Read sysctl configs
-
-- name: Flush handlers now, to activate configs if needed
-  ansible.builtin.meta: flush_handlers
-
-- name: Cluster generation
-  when: '"controlplane" in group_names'
-  block:
-  - name: Generate Cluster    
-    vars:
-      kubernetes_kubeadm_extra: >-
-        {% if not kubernetes_use_kube_proxy|bool %}"--skip-phases=addon/kube-proxy"{% endif %}
-    ansible.builtin.command:
-      cmd: > 
-        kubeadm init --apiserver-advertise-address={{ ansible_facts[kubernetes_interface]['ipv4']['address'] }} 
-        --apiserver-cert-extra-sans="{{ ansible_facts['hostname'] }},{{ ansible_facts['fqdn'] }},{{ ansible_facts[kubernetes_interface]['ipv4']['address'] }}"
-        --control-plane-endpoint="{{ ansible_facts['fqdn'] }}"  
-        --node-name "{{ inventory_hostname_short }}" 
-        --pod-network-cidr={{ kubernetes_pod_network_cidr }}
-        {{ kubernetes_kubeadm_extra }}
-      creates: /etc/kubernetes/admin.conf
-  - name: Generate join command
-    ansible.builtin.command: 
-      cmd: kubeadm token create --print-join-command
-    register: join_command
-  - name: Set join command fact
-    ansible.builtin.set_fact:
-      node_join_command: "{{ join_command.stdout_lines[0] }}" 
-  - name: Register nodes
-    ansible.builtin.command:
-      cmd: "{{ node_join_command }}"
-      creates: /var/lib/kubelet/pki/kubelet-client-current.pem
-    delegate_to: "{{ item }}"
-    delegate_facts: true
-    loop: "{{ groups['nodes'] }}"
-  - name: Copy kubeconfig
-    ansible.builtin.include_tasks:
-      file: copy_kubeconfig.yml
-    loop: "{{ groups['service'] }}"
-    loop_control:
-      loop_var: system
-
-
-- name: Autocompletion
-  become: true
-  run_once: true
-  delegate_to: "{{ groups['service'][0] }}"
-  ansible.builtin.blockinfile:
-    path: "/home/{{ kubernetes_admin_user }}/.bashrc"
-    block: |
-      source <(kubectl completion bash)
-      alias k=kubectl
-      complete -o default -F __start_kubectl k
-    marker: "### {mark} ANSIBLE MANAGED BLOCK (KUBERNETES)"
+# Management tasks, e.g. write kubeconfig
+- name: Setup kubernetes_management
+  ansible.builtin.include_tasks:
+    file: management.yml
+  when: kubernetes_role == 'management'

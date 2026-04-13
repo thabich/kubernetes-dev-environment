@@ -1,0 +1,20 @@
+- name: Check if node is already registred
+  ansible.builtin.stat:
+    path: /var/lib/kubelet/pki/kubelet-client-current.pem
+  register: is_registered
+
+- name: Register if needed
+  when: not is_registered.stat.exists
+  block:  
+  - name: Generate join command
+    ansible.builtin.command: 
+      cmd: kubeadm token create --print-join-command
+    register: join_command
+    delegate_to: "{{ kubernetes_controlplane }}"
+  - name: Set join command fact
+    ansible.builtin.set_fact:
+      node_join_command: "{{ join_command.stdout_lines[0] }}" 
+  - name: Register nodes
+    ansible.builtin.command:
+      cmd: "{{ node_join_command }}"
+      creates: /var/lib/kubelet/pki/kubelet-client-current.pem

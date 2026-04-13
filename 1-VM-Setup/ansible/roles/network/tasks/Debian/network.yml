@@ -1,0 +1,31 @@
+---
+- name: Enable systemd-networkd
+  ansible.builtin.systemd:
+    name: systemd-networkd
+    enabled: true
+    state: started
+
+- name: Enable systemd-resolved
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    enabled: true
+    state: started
+
+- name: Create Netplan config
+  ansible.builtin.template:
+    src: "{{ ('service' in group_names) | ternary('netplan-service.j2', 'netplan.j2') }}"
+    dest: /etc/netplan/01-ansible.yaml
+    mode: "0600"
+    validate: "netplan try --timeout 2 --config-file %s"
+  notify:
+  - NetPlan Apply
+ 
+- name: Remove cloud init config
+  ansible.builtin.file:
+    path: /etc/netplan/50-cloud-init.yaml
+    state: absent
+    
+- name: Flush handlers now, to trigger reboot, if needed
+  ansible.builtin.meta: flush_handlers
+
+

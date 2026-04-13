@@ -1,3 +1,0 @@
-{% for host in groups['all'] %}
-dhcp-host={{ hostvars[host].ansible_facts[dhcp_interface].macaddress }},{{ hostvars[host].ansible_facts[dhcp_interface].ipv4.address }}
-{% endfor %}

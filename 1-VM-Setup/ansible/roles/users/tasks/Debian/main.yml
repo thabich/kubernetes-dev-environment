@@ -1,36 +1,38 @@
 ---
 - name: Create user
   ansible.builtin.user:
-    name: "{{ common_admin_user }}"
+    name: "{{ users_admin_user }}"
     shell: /bin/bash
+  notify: Get user infos
 
 - name: Add ssh_authorized_keys
   ansible.posix.authorized_key:
-    user: "{{ common_admin_user }}"
+    user: "{{ users_admin_user }}"
     key: "{{ lookup('file', 'public_keys/admin.pub') }}"
 
 - name: Add sudo permissions
   community.general.sudoers:
-    name: "{{ common_admin_user }}"
-    user: "{{ common_admin_user }}"
+    name: "{{ users_admin_user }}"
+    user: "{{ users_admin_user }}"
     commands: ALL
     runas: ALL
 
-- name: Lock  password for vagrant user
+- name: Lock password for vagrant user
   ansible.builtin.user:
     name: vagrant
     password_lock: true
+  when: is_vagrant|bool
 
 - name: Create user settings (bashrc)
   ansible.builtin.blockinfile:
-    path: "/home/{{ common_admin_user }}/.bashrc"
-    block: "{{ common_bashrc_block + common_extra_bashrc_block }}"
+    path: "/home/{{ users_admin_user }}/.bashrc"
+    block: "{{ users_bashrc_block + users_extra_bashrc_block }}"
     marker: "### {mark} ANSIBLE MANAGED BLOCK (COMMON)"
 
 - name: Create VIM user settings
   ansible.builtin.copy:
-    dest: "/home/{{ common_admin_user }}/.vimrc"
-    content: "{{ common_vim_settings + common_extra_vim_settings }}"
-    owner: "{{ common_admin_user }}"
-    group: "{{ common_admin_user }}"
+    dest: "/home/{{ users_admin_user }}/.vimrc"
+    content: "{{ users_vim_settings + users_extra_vim_settings }}"
+    owner: "{{ users_admin_user }}"
+    group: "{{ users_admin_user }}"
 

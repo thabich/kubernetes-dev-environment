@@ -1,0 +1,28 @@
+---
+# or use a proper image
+# - name: Reset machine id
+#   ansible.builtin.include_tasks:
+#     file: reset-machine-id.yml
+
+- name: Network config for Vagrant
+  ansible.builtin.include_tasks:
+    file: "{{ ansible_facts['os_family'] }}/vagrant-patch.yml"
+  when: is_vagrant|bool|default(false)
+
+- name: Create network config
+  ansible.builtin.include_tasks:
+    file: "{{ ansible_facts['distribution'] }}/network.yml"
+
+- name: Check if Network is ready
+  ansible.builtin.wait_for:
+    host: "{{ network_service_host_ip | ansible.utils.ipaddr('address') }}"
+    port: 22
+    delay: 2
+
+# Always regather facts, it doesn't hurt and is more stable
+- name: Regather facts
+  ansible.builtin.setup:
+    gather_subset:
+    - network
+
+

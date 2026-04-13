@@ -6,22 +6,22 @@
     components: "{{ item.components | default('stable') }}"
     suites: "{{ item.suites | default(ansible_facts['distribution_release']) }}"
     state: present
-  with_items: "{{ common_apt_repositories + common_extra_apt_repositories }}"
+  with_items: "{{ packages_apt_repositories + packages_extra_apt_repositories }}"
 
 - name: Install packages
   ansible.builtin.apt:
     update_cache: yes
-    pkg: "{{ common_default_packages + common_extra_packages }}"
+    pkg: "{{ packages_default_packages + packages_extra_packages }}"
     state: present
 
 - name: Remove packages
   ansible.builtin.apt:
     update_cache: no
-    pkg: "{{ common_default_remove_packages + common_extra_remove_packages }}"
+    pkg: "{{ packages_default_remove_packages + packages_extra_remove_packages }}"
     state: absent
 
 - name: Hold packages
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
-  with_items: "{{ common_default_hold_packages + common_extra_hold_packages }}"
+  with_items: "{{ packages_default_hold_packages + packages_extra_hold_packages }}"

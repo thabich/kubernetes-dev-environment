@@ -1,0 +1,6 @@
+network:
+  version: 2
+  ethernets:
+    # NatNetwork / Third NIC
+    {{ network_internal_interface }}:
+      dhcp4: true

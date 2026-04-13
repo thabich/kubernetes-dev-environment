@@ -1,0 +1,8 @@
+- name: Enable forwarding on Router
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_file: /etc/sysctl.d/98-routing.conf
+  loop:
+    - net.ipv4.ip_forward
+  when: "'service' in group_names"

@@ -1,21 +1,7 @@
----
-- name: Reset machine id
-  ansible.builtin.include_tasks:
-    file: reset-machine-id.yml
+- name: Get user infos
+  ansible.builtin.getent:
+    database: passwd
 
-- name: Create users
-  ansible.builtin.include_tasks:
-    file: users.yml
-
-- name: Install packages and repos
-  ansible.builtin.include_tasks:
-    file: packages.yml
-
-- name: Create network config
-  ansible.builtin.include_tasks:
-    file: network.yml
-  tags: [Never]
-
-
-
-
+- name: Check if we are on a Vagrant node
+  ansible.builtin.set_fact:
+    is_vagrant: "{{ true if ansible_facts['virtualization_type'] == 'virtualbox' else false }}"

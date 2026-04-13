@@ -1,0 +1,36 @@
+- name: "Create iproute2 directory"
+  ansible.builtin.file:
+    path: "/etc/iproute2"
+    state: directory
+    mode: "0700"
+    owner: root
+    group: root
+
+- name: "Routing Table"
+  ansible.builtin.lineinfile:
+    path: /etc/iproute2/rt_tables
+    line: "100 vagrant"
+    create: true
+    mode: "0600"
+    owner: root
+    group: root
+
+- name: "Kernel parameters for routing policy filter"
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '2'
+    sysctl_file: /etc/sysctl.d/99-vagrant.conf
+  loop:
+    - net.ipv4.conf.all.rp_filter
+    - net.ipv4.conf.enp0s3.rp_filter
+
+
+- name: "Configure enp0s3 (Vagrant mgmt)"
+  ansible.builtin.copy:
+    src: netplan-99-vagrant.yaml
+    dest: /etc/netplan/99-vagrant.yaml
+    mode: "0600"
+    owner: root
+    group: root
+  notify: NetPlan Apply
+

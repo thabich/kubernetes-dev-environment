@@ -6,4 +6,11 @@
 **/*.vault
 **/vault.yml
 **/vault.yaml
+**/*.box
+**/*.vmdk
+**/*.vdi
+**/*.iso
+**/*.exe
+**/packer_cache
 data/
+

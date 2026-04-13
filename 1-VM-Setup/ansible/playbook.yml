@@ -1,14 +1,25 @@
+- hosts: service
+  name: Deploy DHCP service
+  become: true
+  roles:
+    - role: dnsmasq
+      tags: [dnsmasq]
+
 - hosts: all
   name: Deploy base system
   become: true
   roles:
     - role: common
       tags: [common]
-   
-- hosts: nodes,controlplane
-  name: Deploy Kubernetes
-  become: true
-  roles:
+    - role: users
+      tags: [users]
+    - role: firewall
+      tags: [firewall]
+    - role: network
+      tags: [network]
+    - role: packages
+      tags: [packages]
+
     - role: kubernetes
       tags: [kubernetes]
 
@@ -31,11 +42,12 @@
       tags: [argocd]
     - role: squid
       tags: [squid]
-    - role: shellinabox
-      tags: [shellinabox]
     - role: external-access
       tags: [external-access]
     - role: sealed-secrets
       tags: [sealed-secrets]
     - role: tekton-cli
       tags: [tekton-cli]
+# replaced by Wetty via ArgoCD for better Copy and Paste capabilities
+#    - role: shellinabox
+#      tags: [shellinabox]

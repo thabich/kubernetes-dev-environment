@@ -1,0 +1,18 @@
+network:
+  version: 2
+  ethernets:
+    # Internal / Third NIC
+    {{ network_internal_interface }}:
+      dhcp4: false
+      addresses:
+      - {{ network_service_host_ip }}
+      nameservers:
+        search: [{{ network_domain }}]
+        addresses: [{{ network_service_host_ip | ansible.utils.ipaddr('address')  }}]
+
+    # Bridge / Second NIC
+    enp0s8:
+      dhcp4: true
+      dhcp4-overrides:
+        use-dns: false
+

@@ -1,0 +1,7 @@
+network_internal_interface: "{{ dhcp_interface | default('enp0s9') }}" 
+network_internal_network: "{{ internal_network | default('10.0.3.0/24') }}"
+
+network_service_host_ip: "{{ network_internal_network | ansible.utils.ipaddr('3') }}"
+network_service_host_default_gateway: "{{ network_internal_network | ansible.utils.ipaddr('2') | ansible.utils.ipaddr('address') }}"
+network_domain: "{{ domain }}"
+

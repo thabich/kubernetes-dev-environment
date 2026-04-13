@@ -1,0 +1,104 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wetty
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wetty
+  namespace: wetty
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wetty
+  template:
+    metadata:
+      labels:
+        app: wetty
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+      containers:
+        - name: wetty
+          image: wettyoss/wetty:latest
+          args:
+            - "--conf"
+            - "/usr/src/app/config.js"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+          volumeMounts:
+            - name: wetty-config
+              mountPath: /usr/src/app/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: wetty-config
+          configMap:
+            name: wetty-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wetty
+  namespace: wetty
+spec:
+  selector:
+    app: wetty
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: wetty
+  namespace: wetty
+spec:
+  parentRefs:
+    - name: central
+      namespace: kube-system
+  hostnames:
+    - wetty.k8s.findichgut.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: wetty
+          port: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wetty-config
+  namespace: wetty
+data:
+  config.js: |
+    {
+      ssh: {
+        host: 'manager.k8s.findichgut.net',
+        port: 22,
+        knownHosts: '/dev/null',
+      },
+      server: {
+        base: '/',
+        port: 3000,
+        host: '0.0.0.0',
+        title: 'Terminal',
+        bypassHelmet: false,
+      },
+      forceSSH: true,
+      command: 'login',
+    }

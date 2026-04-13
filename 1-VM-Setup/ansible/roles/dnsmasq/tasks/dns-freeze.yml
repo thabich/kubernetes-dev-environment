@@ -1,0 +1,35 @@
+# We are collecting leases to create static reservations
+
+- name: We need to be dynamically statically
+  ansible.builtin.copy:
+    src: dnsmasq-freeze.py
+    dest: /usr/local/sbin/
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Install dnsmasq-freeze service unit
+  ansible.builtin.copy:
+    src: dnsmasq-freeze.service
+    dest: /etc/systemd/system/dnsmasq-freeze.service
+    mode: '0644'
+
+- name: Install dnsmasq-freeze timer unit
+  ansible.builtin.copy:
+    src: dnsmasq-freeze.timer
+    dest: /etc/systemd/system/dnsmasq-freeze.timer
+    mode: '0644'
+
+
+- name: Set dnsmasq-freeze service
+  ansible.builtin.systemd_service:
+    name: dnsmasq-freeze.service
+    enabled: false
+    state: stopped
+    daemon_reload: true
+
+- name: Create dnsmasq-freeze timer
+  ansible.builtin.systemd_service:
+    name: dnsmasq-freeze.timer
+    enabled: true
+    state: started

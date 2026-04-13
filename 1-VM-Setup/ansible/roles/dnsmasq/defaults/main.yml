@@ -1,0 +1,12 @@
+dnsmasq_dhcp_range_start: "{{ dnsmasq_internal_network | ansible.utils.ipaddr('5') | ansible.utils.ipaddr('address')  }}"
+dnsmasq_dhcp_range_end: "{{ dnsmasq_internal_network | ansible.utils.ipaddr('100') | ansible.utils.ipaddr('address') }}"
+dnsmasq_dhcp_lease_time: "1h"
+dnsmasq_dhcp_interface: "{{ dhcp_interface | default('enp0s9') }}" 
+dnsmasq_domain: "{{ domain }}"
+dnsmasq_dns_host_records: []
+dnsmasq_dns_cnames: []
+dnsmasq_upstream_dns: "8.8.8.8"
+
+dnsmasq_internal_network: "{{ internal_network | default('10.0.3.0/24') }}"
+dnsmasq_service_host_ip: "{{ dnsmasq_internal_network | ansible.utils.ipaddr('3') | ansible.utils.ipaddr('address') }}"
+dnsmasq_default_gateway: "{{ dnsmasq_service_host_ip |  ansible.utils.ipaddr('address') }}"

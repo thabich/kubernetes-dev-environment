@@ -3,3 +3,5 @@ python_default_venv: "/home/{{ python_admin_user }}/venv/"
 python_pip_packages:
 - name: ansible
   user: "{{ python_admin_user }}"
+- name: netaddr
+  user: "{{ python_admin_user }}"

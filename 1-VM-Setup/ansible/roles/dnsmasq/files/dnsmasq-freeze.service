@@ -1,0 +1,6 @@
+[Unit]
+Description=Freeze dnsmasq leases to static
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flock -n /tmp/dnsmasq-freeze.lock /usr/local/sbin/dnsmasq-freeze.py

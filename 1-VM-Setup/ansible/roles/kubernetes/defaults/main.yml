@@ -1,6 +1,33 @@
+kubernetes_version: v1.35
 kubernetes_pod_network_cidr: "10.1.0.0/16"
-kubernetes_admin_user: "{{ admin_user | default('vmadm') }}"
-
+kubernetes_admin_user: >-
+  {%- set admins = [admin_user] -%}
+  {%- if is_vagrant|bool|default(false) -%}
+    {{ admins.append("vagrant") }}
+  {%- endif -%}
+  {{ admins }}
 kubernetes_interface: "{{ dhcp_interface | default('enp0s9') }}"
 
 kubernetes_use_kube_proxy: "{{ use_kube_proxy | default(true) }}"
+
+kubernetes_role: >-
+  {%- if "controlplane" in group_names -%}
+  controlplane
+  {%- elif "nodes" in group_names  -%}
+  node
+  {%- elif "service" in group_names  -%}
+  management
+  {%- endif -%}
+
+kubernetes_management: "{{ groups['service'][0] }}"
+kubernetes_controlplane:  "{{ groups['controlplane'][0] }}"
+
+kubernetes_apt_repositories: 
+- name: docker
+  repo: "https://download.docker.com/linux/debian"
+  key: "https://download.docker.com/linux/debian/gpg"
+- name: kubernetes
+  repo: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/"
+  suites: ./
+  components: 
+  key: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/Release.key"

@@ -1,0 +1,85 @@
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  loop:
+    - swap
+    - none
+
+- name: Disable swap
+  ansible.builtin.command:
+    cmd: swapoff -a
+  when: ansible_facts['swaptotal_mb'] > 0
+
+- name: Add apt repositories
+  ansible.builtin.deb822_repository:
+    name: "{{ item.name }}"
+    uris: "{{ item.repo }}"
+    signed_by: "{{ item.key | default(omit) }}" 
+    components: "{{ item.components | default('stable') }}"
+    suites: "{{ item.suites | default(ansible_facts['distribution_release']) }}"
+    state: present
+  with_items: "{{ kubernetes_apt_repositories }}"
+
+
+- name: Install binaries
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - containerd.io
+    - kubelet 
+    - kubeadm
+    - kubectl
+
+- name: Hold packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet 
+    - kubeadm
+    - kubectl
+
+- name: Enable plugins
+  ansible.builtin.lineinfile:
+    path: /etc/containerd/config.toml
+    regex: "^disabled_plugins"
+    state: absent
+  notify: Restart containerd
+
+- name: Enable SystemdCgroups in containerd
+  ansible.builtin.blockinfile:
+    path: /etc/containerd/config.toml
+    block: |
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+        SystemdCgroup = true
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  notify: Restart containerd
+
+- name: Configure node ip
+  ansible.builtin.lineinfile:
+    path: /etc/default/kubelet
+    line: "KUBELET_EXTRA_ARGS=--node-ip={{ ansible_facts[kubernetes_interface]['ipv4']['address'] }}"
+  notify: Restart kubelet
+
+- name: "Kernel parameters for ip forwarding"
+  ansible.posix.sysctl:
+    name: "net.ipv4.ip_forward"
+    value: '1'
+    sysctl_file: /etc/sysctl.d/99-kubernetes.conf
+
+- name: Enable services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - containerd
+    - kubelet
+
+- name: Flush handlers now, to activate configs if needed
+  ansible.builtin.meta: flush_handlers

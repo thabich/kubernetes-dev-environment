@@ -1,0 +1,26 @@
+
+users_admin_user: "{{ admin_user | default('vmadm') }}"
+users_bashrc_block: |
+  if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      alias ls='ls --color=auto'
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
+  fi
+  alias ll='ls -alF'
+  alias la='ls -A'
+  alias l='ls -CF'
+
+users_extra_bashrc_block: ""
+
+users_vim_settings: |
+  unlet! skip_defaults_vim
+  source $VIMRUNTIME/defaults.vim
+  " Your custom overrides follow below
+  set mouse=
+  syntax on
+  set backspace=indent,eol,start
+  set tabstop=2 shiftwidth=2 expandtab
+
+users_extra_vim_settings: ""

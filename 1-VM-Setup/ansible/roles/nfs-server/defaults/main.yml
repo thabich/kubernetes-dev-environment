@@ -1,4 +1,4 @@
 nfs_server_exports:
 - path: /exports
   subnet: 10.0.3.0/24
-  options: rw,sync,no_subtree_check
+  options: rw,sync,no_subtree_check,no_root_squash,no_all_squash

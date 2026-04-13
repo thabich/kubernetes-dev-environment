@@ -1,0 +1,63 @@
+- name: Install binaries
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - kubectl
+
+- name: Hold packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubectl
+
+- name: Get Kubernetes config
+  delegate_to: "{{ kubernetes_controlplane }}"
+  ansible.builtin.slurp:
+    src: /etc/kubernetes/admin.conf
+  register: kubeconfig
+
+- name: Create .kube directory for admin users
+  delegate_to: "{{ kubernetes_management }}"
+  ansible.builtin.file:
+    path: /home/{{ item }}/.kube
+    state: directory
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: "0700"
+  with_items: "{{ kubernetes_admin_user }}"
+
+- name: Write kubernetes config for admin users
+  delegate_to: "{{ kubernetes_management }}"
+  delegate_facts: true
+  ansible.builtin.copy:
+    dest: "/home/{{ item }}/.kube/config"
+    content: "{{ kubeconfig['content'] | b64decode }}"
+    mode: "0600"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    force: false
+  with_items: "{{ kubernetes_admin_user }}"
+
+
+# kubectl completion bash takes quite long on login
+- name: Autocompletion, kubectl
+  become: true
+  ansible.builtin.shell:
+    cmd: kubectl completion bash > /etc/bash_completion.d/kubectl
+    creates: /etc/bash_completion.d/kubectl
+
+- name: Autocompletion, alias
+  vars:
+    ansible_become_user: "{{ item }}"
+    ansible_become: "{{ item != ansible_user }}"
+  ansible.builtin.blockinfile:
+    path: "{{ getent_passwd[item][4] }}/.bashrc"
+    block: |
+      alias k=kubectl
+      complete -o default -F __start_kubectl k
+    marker: "### {mark} ANSIBLE MANAGED BLOCK (KUBERNETES)"
+  loop: "{{ kubernetes_admin_user }}"
