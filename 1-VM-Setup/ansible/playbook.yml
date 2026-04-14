@@ -5,6 +5,7 @@
   roles:
     - role: dnsmasq
       tags: [dnsmasq]
+  any_errors_fatal: true
 
 - hosts: all
   force_handlers: true
@@ -21,35 +22,70 @@
       tags: [network]
     - role: packages
       tags: [packages]
+  any_errors_fatal: true
+
+- hosts: kubernetes
+  force_handlers: true
+  name: Deploy Kubernetes 
+  become: true
+  roles:
     - role: kubernetes
       tags: [kubernetes]
+  any_errors_fatal: true
+
+- hosts: nfs-server
+  force_handlers: true
+  name: Deploy Service Host
+  roles:
+    - role: nfs-server
+      tags: [nfs-server]
+  any_errors_fatal: true
+
+- hosts: service
+  force_handlers: true
+  name: Deploy Kubernetes additional base 
+  roles:
+    - role: kubernetes
+      tags: [kubernetes]
+    - role: helm
+      tags: [helm]
+    - role: cilium
+      tags: [cilium]
+  any_errors_fatal: true
+
+- hosts: service
+  force_handlers: true
+  run_once: true
+  name: Deploy GitOps
+  become: false
+  roles:
+    - role: argocd
+      tags: [argocd]
 
 - hosts: service
   force_handlers: true
   run_once: true
   name: Deploy Service Host
-  become: false
   roles:
-    - role: nfs-server
-      tags: [nfs-server]
-    - role: helm
-      tags: [helm]
-    - role: cilium
-      tags: [cilium]
     - role: python
       tags: [python]
     - role: git
       tags: [git]
-    - role: argocd
-      tags: [argocd]
     - role: squid
       tags: [squid]
+  
+- hosts: service
+  force_handlers: true
+  run_once: true
+  name: Deploy additional Kubernetes services
+  roles:
     - role: external-access
       tags: [external-access]
     - role: sealed-secrets
       tags: [sealed-secrets]
     - role: tekton-cli
       tags: [tekton-cli]
+
 # replaced by Wetty via ArgoCD for better Copy and Paste capabilities
 #    - role: shellinabox
 #      tags: [shellinabox]

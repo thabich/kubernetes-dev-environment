@@ -31,7 +31,8 @@ def ansible_provision(node)
             "kubernetes:children" => ["controlplane", "nodes"],
             "controlplane" => [CONTROL_NODE_NAME],
             "nodes" => (1..N).map { |i| "%s%02d" % [NODE_NAME_PREFIX, i] },
-            "service" => [SERVICE_NODE_NAME]
+            "service" => [SERVICE_NODE_NAME],
+            "nfs-server" => [SERVICE_NODE_NAME]
         }
         ansible.tags = "all,never"
         ansible.limit = "all"

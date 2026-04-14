@@ -7,6 +7,7 @@
     return_content: yes
   register: installer
 - name: Execute the downloaded content
+  become: true
   environment:
     BINARY_NAME: "helm-3"
     DESIRED_VERSION: "{{ helm_3_version | default(omit)}}"
@@ -24,6 +25,7 @@
     return_content: yes
   register: installer
 - name: Execute the downloaded content
+  become: true
   environment:
     BINARY_NAME: "helm-4"
     DESIRED_VERSION: "{{ helm_4_version | default(omit)}}"

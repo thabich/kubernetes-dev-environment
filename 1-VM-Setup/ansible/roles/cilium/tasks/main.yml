@@ -40,3 +40,14 @@
   notify: Autocompletion
 
 
+- name: Create IP pool and policy
+  kubernetes.core.k8s:
+    state: present
+    template: 'lb-ip-pool.yml.j2'
+  when: cilium_l2_announcements|bool
+
+- name: Create Central Gateway
+  kubernetes.core.k8s:
+    state: present
+    template: 'gateway.yml.j2'
+  when: cilium_use_gateway_api|bool

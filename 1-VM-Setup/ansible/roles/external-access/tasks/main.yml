@@ -1,12 +1,4 @@
-- name: Create IP pool and policy
-  kubernetes.core.k8s:
-    state: present
-    template: 'lb-ip-pool.yml.j2'
 
-- name: Create Central Gateway
-  kubernetes.core.k8s:
-    state: present
-    template: 'gateway.yml.j2'
 
 - name: Get IP of Gateway
   ansible.builtin.command:

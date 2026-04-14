@@ -1,4 +1,5 @@
 - name: Install binaries
+  become: true
   apt: 
     name: "{{ packages }}"
     state: present
@@ -8,6 +9,7 @@
     - kubectl
 
 - name: Hold packages
+  become: true
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
@@ -15,13 +17,14 @@
     - kubectl
 
 - name: Get Kubernetes config
+  become: true
   delegate_to: "{{ kubernetes_controlplane }}"
   ansible.builtin.slurp:
     src: /etc/kubernetes/admin.conf
   register: kubeconfig
 
 - name: Create .kube directory for admin users
-  delegate_to: "{{ kubernetes_management }}"
+  become: true
   ansible.builtin.file:
     path: /home/{{ item }}/.kube
     state: directory
@@ -31,8 +34,7 @@
   with_items: "{{ kubernetes_admin_user }}"
 
 - name: Write kubernetes config for admin users
-  delegate_to: "{{ kubernetes_management }}"
-  delegate_facts: true
+  become: true
   ansible.builtin.copy:
     dest: "/home/{{ item }}/.kube/config"
     content: "{{ kubeconfig['content'] | b64decode }}"

@@ -1,11 +1,11 @@
 cilium_admin_user: "{{ admin_user | default('vmadm') }}"
-cilium_helm_binary: "/usr/local/bin/helm-3" 
+cilium_helm_binary: "/usr/local/bin/helm-3"
 cilium_use_kube_proxy: "{{ use_kube_proxy | default(true) }}"
-cilium_use_gateway_api: "{{ (not use_kube_proxy)|bool | ternary(true, false) }}"
-cilium_l2_announcements: "{{ (not use_kube_proxy)|bool | ternary(true, false) }}"
-cilium_use_ingress: false 
+cilium_use_gateway_api: "{{ (not use_kube_proxy) | bool | ternary(true, false) }}"
+cilium_l2_announcements: "{{ (not use_kube_proxy) | bool | ternary(true, false) }}"
+cilium_use_ingress: false
 cilium_gateway_api_version: "v1.4.1"
 cilium_l2_announcements_interface: "{{ dhcp_interface }}"
-cilium_lb_ip_pool_start: "{{ internal_network | ansible.utils.ipaddr('101') | ansible.utils.ipaddr('address')  }}"
-cilium_lb_ip_pool_end: "{{ internal_network | ansible.utils.ipaddr('200') | ansible.utils.ipaddr('address')  }}"
+cilium_lb_ip_pool_start: "{{ internal_network | ansible.utils.ipaddr('101') | ansible.utils.ipaddr('address') }}"
+cilium_lb_ip_pool_end: "{{ internal_network | ansible.utils.ipaddr('200') | ansible.utils.ipaddr('address') }}"
 cilium_version: 1.20.0-pre.1
