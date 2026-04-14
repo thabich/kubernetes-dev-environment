@@ -13,4 +13,5 @@
 **/*.exe
 **/packer_cache
 data/
-
+**/.ansible
+**/.vscode
