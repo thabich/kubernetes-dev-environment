@@ -1,4 +1,5 @@
 - hosts: service
+  force_handlers: true
   name: Deploy DHCP service
   become: true
   roles:
@@ -6,6 +7,7 @@
       tags: [dnsmasq]
 
 - hosts: all
+  force_handlers: true
   name: Deploy base system
   become: true
   roles:
@@ -19,11 +21,11 @@
       tags: [network]
     - role: packages
       tags: [packages]
-
     - role: kubernetes
       tags: [kubernetes]
 
 - hosts: service
+  force_handlers: true
   run_once: true
   name: Deploy Service Host
   become: false

@@ -2,3 +2,10 @@
   become: true
   ansible.builtin.shell:
     cmd: "cilium completion bash > /etc/bash_completion.d/cilium"
+
+- name: Wait for Cilium to come up
+  ansible.builtin.command:
+    cmd: "cilium status --wait"
+  changed_when: false
+  timeout: 600
+  
