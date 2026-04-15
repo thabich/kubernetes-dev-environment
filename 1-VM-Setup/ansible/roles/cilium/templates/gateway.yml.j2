@@ -15,7 +15,7 @@ spec:
     port: 80
     protocol: HTTP
   - name: https-listener
-    hostname: "*.{{ external_access_domain }}"
+    hostname: "{{ cilium_gateway_domain }}"
     port: 443
     protocol: HTTPS
     allowedRoutes:
