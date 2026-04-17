@@ -1,0 +1,16 @@
+# - name: Base configuration
+#   ansible.builtin.include_tasks:
+#     file: base.yml
+
+# - name: Cluster configuration
+#   ansible.builtin.include_tasks:
+#     file: cluster.yml
+
+- name: Get Zones
+  vars:
+    zone_enriched: "{{ proxmox_zones_default.zone | ansible.builtin.combine(zone.settings) }}"
+  ansible.builtin.include_tasks:
+      file: zones.yml
+  loop: "{{ proxmox_zones | dict2items(key_name='name', value_name='settings') }}"
+  loop_control:
+    loop_var: zone

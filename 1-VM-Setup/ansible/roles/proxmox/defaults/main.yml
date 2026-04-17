@@ -1,0 +1,37 @@
+
+proxmox_zones_default:
+  zone:
+    type: simple
+    dhcp: false
+    ipam: pve
+    node_restrictions: []
+    update: true
+    state: present
+    vnets:
+      vnet:
+        state: present
+        update: true
+        alias: omit
+        isolate_ports: false
+        vlan_aware: false
+        subnets:
+        - snat: false
+          dhcp_range_update_mode: overwrite
+          state: present 
+          
+proxmox_default_packages:
+- dnsmasq
+- libpve-network-perl
+- sudo
+
+proxmox_extra_packages: []
+proxmox_apt_repositories:
+- name: ceph
+  state: absent
+- name: pve-enterprise
+  state: absent
+- name: pve
+  repo: http://download.proxmox.com/debian/pve
+  components: pve-no-subscription
+  suites: "{{ ansible_facts['distribution_release'] }}"
+  key: /usr/share/keyrings/proxmox-archive-keyring.gpg

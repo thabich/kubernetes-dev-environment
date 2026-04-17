@@ -1,0 +1,18 @@
+- name: Create a Proxmox VE Cluster
+  community.proxmox.proxmox_cluster:
+    api_password: "{{ proxmox_password }}"
+    state: present
+    link0: "{{ proxmox_link0 }}"
+    link1: "{{ proxmox_link1 | default(omit) }}"
+    cluster_name: "{{ proxmox_cluster_name }}"
+  when: '"proxmox_initial" in group_names'
+
+- name: Create a Proxmox VE Cluster
+  community.proxmox.proxmox_cluster:
+    api_password: "{{ proxmox_password }}"
+    state: present
+    link0: "{{ proxmox_link0 }}"
+    link1: "{{ proxmox_link1 | default(omit) }}"
+    cluster_name: "{{ proxmox_cluster_name }}"
+    master_ip: "{{ proxmox_master_ip }}"
+  when: '"proxmox_nodes" in group_names'

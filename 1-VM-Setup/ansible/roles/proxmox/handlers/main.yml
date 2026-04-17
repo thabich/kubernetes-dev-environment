@@ -1,0 +1,11 @@
+- name: restart proxy
+  ansible.builtin.systemd:
+    name: pveproxy
+    state: restarted
+    enabled: true
+
+- name: restart daemon
+  ansible.builtin.systemd:
+    name: pvedaemon
+    state: restarted
+    enabled: true

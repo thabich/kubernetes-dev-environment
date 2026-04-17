@@ -1,0 +1,2 @@
+common_ca_certs:
+ - findichgut-dev-ca

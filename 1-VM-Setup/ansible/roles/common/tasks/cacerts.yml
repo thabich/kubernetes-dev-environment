@@ -1,0 +1,13 @@
+---
+- name: Ensure CA certificate directory exists
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates
+    state: directory
+    mode: '0755'
+
+- name: Copy CA certificate
+  ansible.builtin.copy:
+    src: "{{ item }}.crt"
+    dest: "/usr/local/share/ca-certificates/{{ item }}.crt"
+  loop: "{{ common_ca_certs }}"
+  notify: Update CA certificates

@@ -1,6 +1,17 @@
-packages_apt_repositories: []
+packages_apt_repositories:
+- name: debian-backports
+  repo: "http://deb.debian.org/debian"
+  components: main
+  suites: "{{ ansible_facts['distribution_release'] }}-backports"
+  key: /usr/share/keyrings/debian-archive-keyring.gpg
+
 packages_extra_apt_repositories: []
-packages_default_packages: []
+
+packages_default_packages:
+  - python3
+  - vim
+  - sudo
+
 packages_extra_packages: []
 packages_default_remove_packages: []
 packages_extra_remove_packages: []

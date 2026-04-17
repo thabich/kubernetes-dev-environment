@@ -1,0 +1,32 @@
+- name: Create a vnet
+  community.proxmox.proxmox_vnet:
+    vnet: '{{ vnet.name }}'
+    zone: '{{ zone.name }}'
+    alias: '{{ vnet_enriched.alias }}'
+    update: '{{ vnet_enriched["update"] }}' # that's on purpose
+ #   vlanaware: '{{ vnet_enriched.vlan_aware }}'
+ #   isolate_ports: '{{ vnet_enriched.isolate_ports }}'
+    vlanaware: 0 # '{{ vnet_enriched.vlan_aware }}'
+    isolate_ports: 0 #'{{ vnet_enriched.isolate_ports }}'
+ 
+    state: '{{ vnet_enriched.state }}'
+    lock_token: 0
+
+- name: Create a subnet
+  vars:
+    subnet_enriched: "{{ proxmox_zones_default.zone.vnets.vnet.subnets[0] | ansible.builtin.combine(subnet) }}"
+  community.proxmox.proxmox_subnet:
+    vnet: "{{ vnet.name }}"
+    subnet: "{{ subnet.subnet }}"
+    zone: "{{ zone.name }}"
+    state: "{{ subnet_enriched.state }}"
+    gateway : "{{ subnet.gateway }}"
+    dhcp_range: "{{ subnet.dhcp_ranges }}"
+    dhcp_dns_server: "{{ subnet.dhcp_dns_server | default(subnet.gateway) }}"
+    dhcp_range_update_mode: "{{ subnet_enriched.dhcp_range_update_mode }}"
+    dnszoneprefix: "{{ subnet.dns_prefix }}"
+    snat: "{{ subnet_enriched.snat }}"
+    lock_token: 0
+  loop: "{{ vnet_enriched.subnets }}"
+  loop_control:
+    loop_var: subnet

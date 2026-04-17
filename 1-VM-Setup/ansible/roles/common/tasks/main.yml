@@ -5,3 +5,7 @@
 - name: Check if we are on a Vagrant node
   ansible.builtin.set_fact:
     is_vagrant: "{{ true if ansible_facts['virtualization_type'] == 'virtualbox' else false }}"
+
+- name: Install CA
+  ansible.builtin.include_tasks:
+    file: cacerts.yml

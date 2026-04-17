@@ -1,11 +1,11 @@
 - name: Add apt repositories
   ansible.builtin.deb822_repository:
     name: "{{ item.name }}"
-    uris: "{{ item.repo }}"
+    uris: "{{ item.repo | default(omit) }}"
     signed_by: "{{ item.key | default(omit) }}" 
     components: "{{ item.components | default('stable') }}"
     suites: "{{ item.suites | default(ansible_facts['distribution_release']) }}"
-    state: present
+    state: "{{ item.state|default('present') }}"
   with_items: "{{ packages_apt_repositories + packages_extra_apt_repositories }}"
 
 - name: Install packages

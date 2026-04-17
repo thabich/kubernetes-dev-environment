@@ -1,23 +1,5 @@
-
-packages_apt_repositories:
-- name: debian-backports
-  repo: "http://deb.debian.org/debian"
-  components: main
-  suites: "{{ ansible_facts['distribution_release'] }}-backports"
-  key: /usr/share/keyrings/debian-archive-keyring.gpg
-
-
-packages_common_packages: []
-
 dhcp_interface: enp0s9
 admin_user: vmadm
-
-packages_default_packages:
-  - python3
-  - rsyslog
-  - unattended-upgrades
-  - nfs-common
-
 domain: "k8s.findichgut.net" 
 
 internal_network: "10.0.3.0/24"

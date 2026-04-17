@@ -1,0 +1,47 @@
+- name: Copy key
+  ansible.builtin.copy:
+    src: "certs/{{ inventory_hostname }}.key.vault"
+    dest: /etc/pve/local/pve-ssl.key
+    owner: root
+    group: www-data
+    mode: "0640"
+  notify:
+  - restart proxy
+  - restart daemon
+
+- name: Copy certificate
+  ansible.builtin.copy:
+    src: "certs/{{ inventory_hostname }}.crt"
+    dest: /etc/pve/local/pve-ssl.pem
+    owner: root
+    group: www-data
+    mode: "0640"
+  notify:
+  - restart proxy
+  - restart daemon
+
+
+- name: Add apt repositories
+  ansible.builtin.deb822_repository:
+    name: "{{ item.name }}"
+    uris: "{{ item.repo|default(omit) }}"
+    signed_by: "{{ item.key | default(omit) }}" 
+    components: "{{ item.components | default('stable') }}"
+    suites: "{{ item.suites | default(ansible_facts['distribution_release']) }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ proxmox_apt_repositories }}"
+
+- name: Install packages
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg: "{{ proxmox_default_packages + proxmox_extra_packages }}"
+    state: present
+
+- name: Remove login banner
+  ansible.builtin.replace:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    regexp: "res\\.data\\.status\\.toLowerCase\\(\\) !== 'active'"
+    replace: "false"
+    backup: true
+  notify:
+  - restart proxy

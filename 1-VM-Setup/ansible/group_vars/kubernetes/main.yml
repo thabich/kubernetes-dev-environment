@@ -1,0 +1,4 @@
+packages_extra_packages:
+- rsyslog
+- unattended-upgrades
+- nfs-common

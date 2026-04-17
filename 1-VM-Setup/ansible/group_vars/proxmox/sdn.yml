@@ -1,0 +1,21 @@
+proxmox_zones:
+  homezone:
+    type: simple
+    dhcp: true
+    ipam: pve
+    node_restrictions: [pve01]
+    vnets:
+      hznet:
+        alias: ""
+        subnets:
+        - subnet: "10.0.4.0/24"
+          gateway: "10.0.4.1"
+          dhcp_dns_server: "10.0.4.1"
+          snat: false
+          dns_prefix: pve.findichgut.net
+          dhcp_ranges:
+          - start: 10.0.4.10
+            end: 10.0.4.150
+
+
+  

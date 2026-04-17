@@ -61,4 +61,11 @@ if [ $WSL == 1 ]; then
         write_status "You will have to restart WSL after the installation ( wsl --shutdown distroName and wsl -d distroName in PowerShell)" 
 fi
 
+write_status "Installing Gopass"
+gopass_install=$( dirname $0 )/install-gopass.sh
+if [ -f "$gopass_install" ]; then
+	exec $gopass_install
+fi
+
+
 write_status "Installation finished, please make sure to run source venv/bin/activate each time before using vagrant"

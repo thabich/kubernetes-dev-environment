@@ -1,0 +1,12 @@
+proxmox_host: "{{ ansible_facts['default_ipv4']['address'] }}"
+proxmox_token_id: "ansible-token"
+proxmox_url: https://{{ ansible_facts['default_ipv4']['address'] }}:8006
+proxmox_user: "root@pam"
+proxmox_validate_cert: true
+proxmox_link0: "{{ proxmox_host }}"
+proxmox_cluster_name: "petrivtsi-main"
+proxmox_master_ip: 192.168.0.101 # required in case the playbook is limited to nodes
+
+packages_apt_repositories:
+- name: debian-backports
+  state: absent

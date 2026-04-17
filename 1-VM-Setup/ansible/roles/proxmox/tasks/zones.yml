@@ -1,0 +1,26 @@
+- name: Debug
+  ansible.builtin.debug:
+    var: zone_enriched
+- name: Create zones
+  community.proxmox.proxmox_zone:
+    type: "{{ zone_enriched.type }}"
+    zone: "{{ zone.name }}"
+    dhcp: "{{ 'dnsmasq' if zone_enriched.dhcp else omit }}"
+    nodes: "{{ zone_enriched.node_restrictions|join(',') }}"
+    ipam: "{{ zone_enriched.ipam }}"
+    state: "{{ zone_enriched.state }}"
+    update: "{{ zone_enriched['update'] }}"
+  register: bla
+
+- name: Debug
+  debug:
+    var: bla
+    
+- name: Get Vnets
+  vars:
+    vnet_enriched: "{{ proxmox_zones_default.zone.vnets.vnet | ansible.builtin.combine(vnet.settings) }}"
+  ansible.builtin.include_tasks:
+    file: vnets.yml
+  loop: "{{ zone.settings.vnets | dict2items(key_name='name', value_name='settings') }}"
+  loop_control:
+    loop_var: vnet

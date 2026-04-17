@@ -1,0 +1,43 @@
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Gather facts
+      debug:
+        msg: "{{ ansible_facts['distribution_release'] }}-backports"
+
+- hosts: proxmox
+  force_handlers: true
+  any_errors_fatal: true
+  name: Deploy Proxmox Cluster
+  environment:
+    PROXMOX_HOST: "{{ proxmox_host }}"
+    PROXMOX_TOKEN_ID: "{{ proxmox_token_id }}"
+    PROXMOX_TOKEN_SECRET: "{{ proxmox_token_secret }}"
+    PROXMOX_USER: "{{ proxmox_user }}"
+    PROXMOX_VALIDATE_CERTS: "{{ proxmox_validate_cert }}"
+  roles:
+    - role: common
+      tags: [common]
+    - role: users
+      tags: [users]
+    - role: packages
+      tags: [packages]
+    - role: proxmox
+      tags: [proxmox]
+
+
+
+
+# - hosts: all
+#   force_handlers: true
+#   name: Deploy base system
+#   become: true
+#   roles:
+
+
+#     - role: firewall
+#       tags: [firewall]
+#     - role: network
+#       tags: [network]
+
+#   

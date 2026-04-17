@@ -1,0 +1,8 @@
+[proxmox_initial]
+pve01 ansible_host=192.168.0.101 ansible_user=root
+
+[proxmox_nodes]
+
+[proxmox:children]
+proxmox_initial
+proxmox_nodes

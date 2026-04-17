@@ -6,6 +6,10 @@ packages_extra_packages:
 - python3-virtualenv
 - python3-venv
 - jq
+- rsyslog
+- unattended-upgrades
+- nfs-common
+
 
 argocd_version: v3.3.6
 
